@@ -51,10 +51,129 @@
         .logo { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; cursor: pointer; }
         .back-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600; transition: 0.3s; text-transform: uppercase; }
         .back-btn:hover { background: #fff; color: #000; }
-        .nav-links { display: flex; gap: 40px; }
+        .nav-links { display: flex; gap: 40px; align-items: center; }
         .nav-link { color: var(--text-gray); text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; transition: 0.3s; cursor: pointer; }
         .nav-link:hover { color: var(--text-white); transform: translateY(-1px); }
 
+
+        /* ── REDEEM POPUP ── */
+        .redeem-overlay {
+            position: fixed; inset: 0; z-index: 9998;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+            animation: fadeInOverlay 0.3s ease forwards;
+        }
+        .redeem-overlay.active { display: flex; }
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+        .redeem-popup {
+            width: 100%; max-width: 620px;
+            background: rgba(10, 10, 12, 0.95);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            animation: popupSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+        }
+        @keyframes popupSlideUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.97); filter: blur(6px); }
+            to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .redeem-close {
+            position: absolute; top: 18px; right: 20px;
+            background: none; border: none; color: #888; font-size: 1.4rem;
+            cursor: pointer; line-height: 1; transition: color 0.2s;
+        }
+        .redeem-close:hover { color: #fff; }
+
+        .redeem-popup h2 {
+            font-family: var(--font-display); font-size: 1.6rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2px; text-align: center; margin-bottom: 6px;
+        }
+        .redeem-sub {
+            text-align: center; font-size: 0.78rem; color: #888;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 28px; font-weight: 600;
+        }
+
+        /* Mars video inside popup — hidden by default */
+        .redeem-video-wrapper {
+            width: 100%; aspect-ratio: 16/9; border-radius: 10px;
+            overflow: hidden; position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: #000; margin-bottom: 24px;
+            display: none;
+        }
+        .redeem-video-wrapper.visible { display: block; }
+        #mars-video {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+
+        /* mini player controls for mars video */
+        .mars-controls {
+            display: none; align-items: center; gap: 14px; margin-bottom: 24px;
+        }
+        .mars-controls.visible { display: flex; }
+        .mars-ctrl-btn {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+            color: #fff; width: 38px; height: 38px; border-radius: 8px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; flex-shrink: 0;
+        }
+        .mars-ctrl-btn:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); }
+        .mars-ctrl-btn svg { fill: #fff; }
+        .mars-timeline-bg {
+            flex-grow: 1; height: 5px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; cursor: pointer; position: relative;
+        }
+        .mars-timeline-fill {
+            height: 100%; background: #fff; width: 0%;
+            position: absolute; top: 0; left: 0; border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+        .mars-time { font-size: 0.72rem; color: #888; white-space: nowrap; }
+        .mars-vol-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .mars-vol-wrap svg { fill: #888; flex-shrink: 0; }
+        .mars-vol-slider {
+            -webkit-appearance: none; width: 75px; height: 4px;
+            background: #333; outline: none; border-radius: 2px;
+        }
+        .mars-vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 11px; height: 11px;
+            background: #fff; border-radius: 50%; cursor: pointer;
+        }
+
+        /* code input */
+        .redeem-input-row { display: flex; gap: 10px; }
+        .redeem-input-row input {
+            flex-grow: 1; padding: 16px 18px;
+            background: rgba(5,5,5,0.8); border: 1px solid var(--glass-border);
+            color: #fff; font-size: 0.95rem; outline: none; border-radius: 8px;
+            text-transform: uppercase; letter-spacing: 2px;
+            transition: border-color 0.3s;
+            margin-bottom: 0;
+        }
+        .redeem-input-row input:focus { border-color: rgba(255,255,255,0.5); }
+        .redeem-input-row input.error { border-color: #ff0033; }
+        .redeem-input-row input.success { border-color: #00ff66; }
+        .redeem-submit-btn {
+            background: #fff; color: #000; border: none;
+            padding: 16px 24px; border-radius: 8px; font-size: 0.85rem;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+            cursor: pointer; transition: all 0.3s; white-space: nowrap; flex-shrink: 0;
+        }
+        .redeem-submit-btn:hover { background: #e5e5e5; transform: translateY(-1px); }
+        .redeem-status {
+            margin-top: 12px; font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; text-align: center;
+            min-height: 18px;
+        }
+        .redeem-status.ok  { color: #00ff66; }
+        .redeem-status.err { color: #ff0033; }
+
+        /* ── REST OF ORIGINAL STYLES ── */
         .search-box-container { width: 100%; max-width: 450px; margin-bottom: 40px; position: relative; z-index: 10; }
         .cool-search { width: 100%; padding: 16px 20px; background: var(--dark-glass); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; backdrop-filter: blur(10px); }
         .cool-search:focus { border-color: rgba(255,255,255,0.5); box-shadow: 0 0 15px rgba(255,255,255,0.1); }
@@ -79,7 +198,6 @@
         .rev-user { font-weight: 700; font-size: 0.8rem; color: #fff; letter-spacing: 0.3px; }
         .rev-stars { color: #00ff66; font-size: 0.75rem; letter-spacing: 1px; }
         .rev-text { font-size: 0.75rem; color: #cccccc; line-height: 1.4; font-style: italic; }
-
         @keyframes slideInRev { to { opacity: 1; transform: translateY(0); } }
         @keyframes slideOutRev { to { opacity: 0; transform: translateY(-15px) scale(0.96); filter: blur(4px); } }
 
@@ -88,7 +206,6 @@
             display: none; flex-direction: column; align-items: center; width: 100%; position: relative;
         }
         .view-section.active { display: flex; animation: viewSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
         @keyframes viewSlideUp {
             from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
             to { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -104,19 +221,16 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             outline: none;
         }
-        
         .card.artist-card-drake {
             background: linear-gradient(rgba(15, 15, 15, 0.75), rgba(15, 15, 15, 0.85)), url('artist_card_bg.png');
             background-size: cover; background-position: center;
         }
-        
         .card:hover { border-color: rgba(255,255,255,0.7); transform: translateY(-8px) scale(1.02); box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
         
         .img-wrapper {
             position: relative; width: 200px; height: 200px; margin: 0 auto 22px auto;
             border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
         }
-
         .card img { width: 100%; height: 100%; object-fit: cover !important; aspect-ratio: 1/1 !important; display: block; transition: transform 0.4s ease; }
         .card img.profile-thumb { border: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 2; }
         .card:hover img { transform: scale(1.05); }
@@ -154,26 +268,14 @@
         .gui-meta-item strong { color: #fff; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; display: inline-block; width: 110px; }
 
         .gui-tracklist-wrapper { 
-            background: rgba(0, 0, 0, 0.4); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 8px; 
-            padding: 15px; 
-            margin-bottom: 20px; 
-            overflow: visible; 
-            height: auto; 
-            max-height: none; 
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 8px; padding: 15px; margin-bottom: 20px; 
+            overflow: visible; height: auto; max-height: none; 
         }
         .gui-tracklist-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 10px; }
         .gui-tracks-content { 
-            font-size: 0.78rem; 
-            color: #eee; 
-            line-height: 1.7; 
-            white-space: pre-line; 
-            column-count: 2; 
-            column-gap: 20px; 
-            overflow: visible; 
-            height: auto; 
-            max-height: none;
+            font-size: 0.78rem; color: #eee; line-height: 1.7; white-space: pre-line; 
+            column-count: 2; column-gap: 20px; overflow: visible; height: auto; max-height: none;
         }
 
         .btn {
@@ -254,8 +356,46 @@
         <div class="nav-links">
             <span class="nav-link" onclick="handleBackNavigation()">Explore Hub</span>
             <span class="nav-link" onclick="goToReviews()">Contact & Reviews</span>
+            <span class="nav-link" onclick="openRedeemPopup()">Redeem Code</span>
         </div>
     </nav>
+
+    <!-- REDEEM POPUP -->
+    <div class="redeem-overlay" id="redeemOverlay" onclick="handleOverlayClick(event)">
+        <div class="redeem-popup">
+            <button class="redeem-close" onclick="closeRedeemPopup()">✕</button>
+            <h2>Redeem Code</h2>
+            <div class="redeem-sub">Enter your exclusive access code below</div>
+
+            <div class="redeem-video-wrapper">
+                <video id="mars-video" playsinline preload="metadata">
+                    <source src="mars_video.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="mars-controls">
+                <button class="mars-ctrl-btn" onclick="toggleMarsVideo()" id="mars-play-btn">
+                    <svg id="mars-play-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="mars-timeline-bg" id="mars-timeline" onmousedown="startMarsScrub(event)">
+                    <div class="mars-timeline-fill" id="mars-timeline-fill"></div>
+                </div>
+                <span class="mars-time" id="mars-time-current">0:00</span>
+                <span class="mars-time" style="color:#555;">/</span>
+                <span class="mars-time" id="mars-time-duration">0:00</span>
+                <div class="mars-vol-wrap">
+                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                    <input type="range" class="mars-vol-slider" min="0" max="1" step="0.01" value="0.8" id="mars-vol-slider" oninput="marsVideo.volume=this.value">
+                </div>
+            </div>
+
+            <div class="redeem-input-row">
+                <input type="text" id="redeem-code-input" placeholder="ENTER CODE HERE..." maxlength="30">
+                <button class="redeem-submit-btn" onclick="checkRedeemCode()">SUBMIT</button>
+            </div>
+            <div class="redeem-status" id="redeem-status"></div>
+        </div>
+    </div>
 
     <div class="live-reviews-container" id="reviewFeed"></div>
 
@@ -377,7 +517,7 @@
 
     <script>
         const _uX = "YUhSMGNEb3ZMMlJwYzI5eVpDNWpiMjB2WVdsM0pXZGlhVzlyY3k4eE5UQTFNamt5T0RRd05ERXhOREUxT1Rrdk5EUVdaMllXU21kbWVXOW5SR0ZNWjNkM2VYZDNYbXBLZWZsRWNFMVRTbU0zWnpSM1pYcERhSGR6YmloM1FXUjJhMEE5PQ==";
-        const _uY = "YUhSMGNEb3ZMMlJwYzI5eVpDNWpiMjB2WVdsM0pXZGlhVzlyY3k4eE5UQTFNamt6TlRRek9EWXhNRGt4T1RFdk1UZ0lJa3RXYU1wclEwOXBUMU5vWldkallZbG5ZV05RUWpOSmRsZHpObW8xWWpObldrdG1lVnBxZVRwaWFWOXzTzUwVFE9PQ==";
+        const _uY = "YUhSMGNEb3ZMMlJwYzI5eVpDNWpiMjB2WVdsM0pXZGlhVzlyY3k4eE5UQTFNamt6TlRRek9EWXhNRGt4T1RFdk1UZ0lJa3RXYU1wclEwOXBUMU5vWldkallZbG5ZV05RUWpOSmRsZHpObW8xWWpObldrdG1lVnBxZVRwaWFWOXzTzUwVFE5PQ==";
         function _solve(s) { try { return atob(atob(s)); } catch(e) { return ""; } }
 
         const staticBg = document.getElementById('main-static-bg');
@@ -397,8 +537,17 @@
         const searchSuggestionsBox = document.getElementById('searchSuggestionsBox');
         const reviewFeedContainer = document.getElementById('reviewFeed');
 
+        // Mars video refs
+        const marsVideo = document.getElementById('mars-video');
+        const marsPlayIcon = document.getElementById('mars-play-icon');
+        const marsTimelineFill = document.getElementById('mars-timeline-fill');
+        const marsTimeCurrent = document.getElementById('mars-time-current');
+        const marsTimeDuration = document.getElementById('mars-time-duration');
+        const marsTimeline = document.getElementById('mars-timeline');
+
         let selectedKit = "";
         let isScrubbing = false;
+        let isMarsScrubbing = false;
         let globalDownloadLink = "";
         let currentActiveView = "artists-view";
         let previousView = "artists-view";
@@ -406,9 +555,159 @@
         let countingUp = true;
         let isUnlocked = false;
         let selectedStarValue = 0;
+        let drakeWasPausedByRedeem = false;
 
         videoBg.volume = 0.25;
+        marsVideo.volume = 0.25;
+        document.getElementById('mars-vol-slider').value = 0.25;
 
+        marsVideo.addEventListener('ended', () => {
+            setTimeout(() => closeRedeemPopup(), 600);
+        });
+
+        // ── REDEEM POPUP LOGIC ──
+        function openRedeemPopup() {
+            const overlay = document.getElementById('redeemOverlay');
+            overlay.classList.add('active');
+            // Pause drake music if it's playing — remember state
+            if (currentActiveView !== 'artists-view' && !videoBg.paused) {
+                videoBg.pause();
+                drakeWasPausedByRedeem = true;
+                svgPlayIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                visBox.classList.remove('moving');
+            } else {
+                drakeWasPausedByRedeem = false;
+            }
+            document.getElementById('redeem-status').textContent = '';
+            document.getElementById('redeem-status').className = 'redeem-status';
+            document.getElementById('redeem-code-input').value = '';
+            document.getElementById('redeem-code-input').className = '';
+        }
+
+        function closeRedeemPopup() {
+            const overlay = document.getElementById('redeemOverlay');
+            overlay.classList.remove('active');
+            // Pause + hide mars video
+            if (!marsVideo.paused) {
+                marsVideo.pause();
+                marsPlayIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            }
+            marsVideo.currentTime = 0;
+            document.querySelector('.redeem-video-wrapper').classList.remove('visible');
+            document.querySelector('.mars-controls').classList.remove('visible');
+            // Resume drake only if we're in the drake tab AND it was playing before
+            if (drakeWasPausedByRedeem && currentActiveView !== 'artists-view') {
+                videoBg.play().catch(() => {});
+                svgPlayIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                visBox.classList.add('moving');
+                drakeWasPausedByRedeem = false;
+            }
+        }
+
+        function handleOverlayClick(e) {
+            if (e.target === document.getElementById('redeemOverlay')) closeRedeemPopup();
+        }
+
+        // Keyboard ESC closes popup
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('redeemOverlay').classList.contains('active')) {
+                closeRedeemPopup();
+            }
+        });
+
+        // Mars video controls
+        function toggleMarsVideo() {
+            if (marsVideo.paused) {
+                marsVideo.play().catch(() => {});
+                marsPlayIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            } else {
+                marsVideo.pause();
+                marsPlayIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            }
+        }
+
+        marsVideo.addEventListener('timeupdate', () => {
+            if (isMarsScrubbing) return;
+            const cur = marsVideo.currentTime, dur = marsVideo.duration;
+            if (dur) {
+                marsTimelineFill.style.width = `${(cur / dur) * 100}%`;
+                marsTimeCurrent.textContent = fmtTime(cur);
+                marsTimeDuration.textContent = fmtTime(dur);
+            }
+        });
+
+
+
+        function fmtTime(s) {
+            const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+            return `${m}:${sec < 10 ? '0' + sec : sec}`;
+        }
+
+        function startMarsScrub(e) {
+            isMarsScrubbing = true;
+            processMarsScrub(e);
+            window.addEventListener('mousemove', processMarsScrub);
+            window.addEventListener('mouseup', endMarsScrub);
+        }
+        function processMarsScrub(e) {
+            const rect = marsTimeline.getBoundingClientRect();
+            let pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+            marsTimelineFill.style.width = `${pct * 100}%`;
+        }
+        function endMarsScrub(e) {
+            if (!isMarsScrubbing) return;
+            const rect = marsTimeline.getBoundingClientRect();
+            let pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+            if (marsVideo.duration) marsVideo.currentTime = pct * marsVideo.duration;
+            isMarsScrubbing = false;
+            window.removeEventListener('mousemove', processMarsScrub);
+            window.removeEventListener('mouseup', endMarsScrub);
+        }
+
+        // Redeem code check
+        const validCodes = {
+            "DRAKEKIT": "https://drive.google.com/",  // replace with real link
+            "ICEMAN": "https://drive.google.com/"     // replace with real link
+        };
+
+        function checkRedeemCode() {
+            const input = document.getElementById('redeem-code-input');
+            const status = document.getElementById('redeem-status');
+            const code = input.value.trim().toUpperCase();
+            if (!code) { status.textContent = "PLEASE ENTER A CODE."; status.className = 'redeem-status err'; return; }
+
+            // Special: MARS shows the video
+            if (code === 'MARS') {
+                input.className = 'success';
+                status.textContent = "✔ CODE ACCEPTED — LOADING VIDEO...";
+                status.className = 'redeem-status ok';
+                document.querySelector('.redeem-video-wrapper').classList.add('visible');
+                document.querySelector('.mars-controls').classList.add('visible');
+                marsVideo.play().catch(() => {});
+                marsPlayIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                return;
+            }
+
+            if (validCodes[code]) {
+                input.className = 'success';
+                status.textContent = "✔ CODE ACCEPTED — UNLOCKING...";
+                status.className = 'redeem-status ok';
+                setTimeout(() => { window.open(validCodes[code], '_blank'); }, 800);
+            } else {
+                input.className = 'error';
+                status.textContent = "✗ INVALID CODE. TRY AGAIN.";
+                status.className = 'redeem-status err';
+                input.value = '';
+                setTimeout(() => { input.className = ''; }, 1200);
+            }
+        }
+
+        // Enter key submits code
+        document.getElementById('redeem-code-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') checkRedeemCode();
+        });
+
+        // ── ORIGINAL LOGIC (unchanged) ──
         const drakePlaylist = [
             { name: "SHABANG", file: "bg-video.mp4", cover: "player_shabang.png", volMod: 1.0 },
             { name: "2 HARD FOR THE RADIO", file: "2_hard_4_the_radio.mp4", cover: "player_2hard.png", volMod: 0.5 },
@@ -433,85 +732,30 @@
         };
 
         const albumDatabase = {
-            "ICEMAN": {
-                year: "May 15, 2026", genre: "Hip-Hop / Rap", tracks: "18 Tracks", charts: "Studio Album Extraction",
-                songs: "1. Make Them Cry\n2. Dust\n3. Whisper My Name\n4. Janice STFU\n5. Ran To Atlanta (feat. Future)\n6. Shabang\n7. Make Them Pay\n8. Burning Bridges\n9. National Treasures\n10. B's On The Table (feat. 21 Savage)\n11. What Did I Miss?\n12. Plot Twist\n13. 2 Hard 4 The Radio\n14. Make Them Remember\n15. Little Birdie\n16. Don't Worry\n17. Firm Friends\n18. Make Them Know"
-            },
-            "HABIBTI": {
-                year: "May 15, 2026", genre: "Hip-Hop / R&B", tracks: "10 Tracks", charts: "Studio Album Extraction",
-                songs: "1. Rusty Intro\n2. WNBA\n3. Slap The City (feat. Qendresa)\n4. High Fives\n5. Hurrr Nor Thurrr (feat. Sexyy Red)\n6. I'm Spent (feat. Loe Shimmy)\n7. Classic\n8. Gen 5\n9. White Bone\n10. Fortworth (feat. PARTYNEXTDOOR)"
-            },
-            "MAID OF HONOUR": {
-                year: "May 15, 2026", genre: "Hip-Hop / R&B", tracks: "14 Tracks", charts: "Studio Album Extraction",
-                songs: "1. Hoe Phase\n2. Road Trips\n3. Outside Tweaking (feat. Stunna Sandy)\n4. Cheetah Print (feat. Sexyy Red)\n5. Which One (feat. Central Cee)\n6. Amazing Shape (feat. Popcaan)\n7. BBW\n8. True Bestie (feat. Iconic Savvy)\n9. Where's Your Stuff\n10. Interlude\n11. New Bestie\n12. Q&A\n13. Stuck\n14. Goose and The Juice Princess"
-            },
-            "$OME $EXY $ONGS 4 U": {
-                year: "Feb 14, 2025", genre: "R&B / Slow Jam Collab", tracks: "21 Tracks", charts: "Collab Studio Pack",
-                songs: "1. CN Tower\n2. Moth Balls\n3. $omething About You\n4. Crying In Chanel\n5. $pider-Man $uperman\n6. Deeper\n7. $mall Town Fame\n8. Pimmie's Dilemma (feat. Pim)\n9. Brian Steel\n10. Gimme A Hug\n11. Raining In Houston\n12. Lasers\n13. Meet Your Padre (feat. Chino Pacas)\n14. Nokia\n15. Die Trying (feat. Yebba)\n16. $omebody Loves Me\n17. Celibacy\n18. OMW\n19. Glorious (feat. Ice Spice)\n20. When He's Gone\n21. Outro"
-            },
-            "For All The Dogs": {
-                year: "Oct 6, 2023", genre: "Hip-Hop / Trap", tracks: "23 Tracks (+4 Bonus)", charts: "Studio Album Extraction",
-                songs: "1. Action Needed (Intro)\n2. Slime You Out (feat. SZA)\n3. Virginia Beach\n4. Calling For You (feat. 21 Savage)\n5. Fear Of Heights\n6. Rich Baby Daddy (feat. Sexyy Red & SZA)\n7. 8AM In Charlotte\n8. Tried Our Best\n9. First Person Shooter (feat. J. Cole)\n10. Members Only\n11. Gently (feat. Bad Bunny)\n12. Bahamas Promises (feat. Giveon)\n13. Daylight\n14. Away From Home\n15. You Broke My Heart\n16. IDGAF (feat. Yeat)\n17. 7969 Santa\n18. Drew A Picasso\n19. All The Parties (feat. Chief Keef)\n20. Another Late Night (feat. Lil Yachty)\n21. BBL Drizzy\n22. 3AM On Glenwood\n23. $(Outro)\n— SCARY HOURS EDITION —\n24. Housekeeping Knows\n25. Red Button\n26. Medium Things (feat. Jazmine Sullivan)\n27. Polar Opposite (feat. J. Cole)"
-            },
-            "Her Loss": {
-                year: "Nov 4, 2022", genre: "Hip-Hop / Trap (w/ 21 Savage)", tracks: "14 Tracks", charts: "Collab Studio Pack",
-                songs: "1. Rich Flex\n2. Major Distribution\n3. On BS\n4. Privileged Rappers\n5. Spin Bout U\n6. Broke Boys\n7. More M's\n8. Jimmy Cooks\n9. P Power\n10. BackOutsideBoyz\n11. Treacherous Twins\n12. Hours In Silence\n13. All The Parties\n14. I Guess It's Fuck Me"
-            },
-            "Honestly Nevermind": {
-                year: "Jun 17, 2022", genre: "Dance / House / R&B", tracks: "16 Tracks", charts: "Studio Album Extraction",
-                songs: "1. Falling Back\n2. Texts Go Green\n3. Currents\n4. A Keeper\n5. Massive\n6. Flight's Booked\n7. Overdrive\n8. Down Hill\n9. Sticky (feat. Young Thug, Future & Swizz Beatz)\n10. Liability\n11. In The Bible (feat. Giveon & Lil Durk)\n12. Here & Now\n13. Calling My Name\n14. Tie That Binds\n15. Yebba's Heartbreak\n16. Jimmy Cooks (feat. 21 Savage)"
-            },
-            "Certified Lover Boy": {
-                year: "Sep 3, 2021", genre: "Hip-Hop / R&B", tracks: "21 Tracks", charts: "Studio Album Extraction",
-                songs: "1. Champagne Poetry\n2. TSU\n3. Way 2 Sexy (feat. Future & Young Thug)\n4. Fair Trade (feat. Travis Scott)\n5. Pipe Down\n6. Wants and Needs (feat. Lil Baby)\n7. In The Bible (feat. Lil Durk & Giveon)\n8. Love All (feat. JAY-Z)\n9. Shot For Me\n10. Girls Want Girls (feat. Lil Baby)\n11. On The Radar (feat. Central Cee)\n12. Knife Talk (feat. 21 Savage & Project Pat)\n13. 7am On Bridle Path\n14. Papi's Home\n15. Get Along Better (feat. Ty Dolla $ign)\n16. You Only Live Twice (feat. Lil Wayne & Rick Ross)\n17. No Friends In The Industry\n18. IMY2 (feat. Kid Cudi)\n19. Yebba's Heartbreak\n20. TSU (Outro)"
-            },
-            "Dark Lane Demo Tapes": {
-                year: "May 1, 2020", genre: "Hip-Hop / Trap / Mixtape", tracks: "14 Tracks", charts: "Mixtape Extraction",
-                songs: "1. Demons (feat. Fivio Foreign & Sosa Geek)\n2. When To Say When\n3. Chicago Freestyle (feat. Giveon)\n4. Pain 1993 (feat. Playboi Carti)\n5. Losses\n6. Blinding Lights (feat. The Weeknd)\n7. War (feat. 21 Savage)\n8. DESIRES (feat. Future)\n9. Time Flies\n10. Toosie Slide\n11. D4L (feat. Future, Young Thug & Playboi Carti)\n12. Not Around\n13. Life Is Good (feat. Future)"
-            },
-            "Care Package": {
-                year: "Aug 2, 2019", genre: "Hip-Hop / Compilation", tracks: "17 Tracks", charts: "Compilation Kit",
-                songs: "1. Try Me\n2. Draft Day\n3. 5 AM In Toronto\n4. Furthest Thing (Demo)\n5. The Language (Demo)\n6. 0 To 100 / The Catch Up\n7. 6PM In New York\n8. How Bout Now\n9. My Side\n10. Back To Back\n11. 4PM In Calabasas\n12. Childs Play (Demo)\n13. Can I\n14. Jungle\n15. 6 God\n16. Summer Sixteen\n17. Diplomatic Immunity"
-            },
-            "Scorpion": {
-                year: "Jun 29, 2018", genre: "Hip-Hop / R&B / Double Album", tracks: "25 Tracks", charts: "Studio Album Extraction",
-                songs: "— SIDE A —\n1. Survival\n2. Nonstop\n3. Elevate\n4. Emotionless\n5. God's Plan\n6. I'm Upset\n7. 8 Out Of 10\n8. Mob Ties\n9. Can't Take A Joke\n10. Sandra's Rose\n11. Talk Up (feat. JAY-Z)\n12. Is There More\n— SIDE B —\n13. Peak\n14. Summer Games\n15. Jaded\n16. Nice For What\n17. Finesse\n18. Ratchet Happy Birthday\n19. That's How You Feel\n20. Blue Tint\n21. In My Feelings\n22. Don't Matter To Me (feat. Michael Jackson)\n23. After Dark (feat. Static Major & Ty Dolla $ign)\n24. Final Fantasy\n25. March 14"
-            },
-            "More Life": {
-                year: "Mar 18, 2017", genre: "Dancehall / Afrobeats / Hip-Hop", tracks: "22 Tracks", charts: "Playlist Pack",
-                songs: "1. More Life\n2. Passionfruit\n3. Jorja Interlude (feat. Jorja Smith)\n4. Get It Together (feat. Black Coffee & Jorja Smith)\n5. Madiba Riddim\n6. Blem\n7. 4422 (feat. Sampha)\n8. Gyalchester\n9. Skepta Interlude (feat. Skepta)\n10. Portland (feat. Quavo & Travis Scott)\n11. Sacrifices (feat. 2 Chainz & Young Thug)\n12. Nothings Into Somethings\n13. Teenage Fever\n14. KMT (feat. Giggs)\n15. Lose You\n16. Can't Have Everything\n17. Glow (feat. Kanye West)\n18. Since Way Back (feat. PARTYNEXTDOOR)\n19. Fake Love\n20. Ice Melts (feat. Young Thug)\n21. Do Not Disturb"
-            },
-            "Views": {
-                year: "Apr 29, 2016", genre: "Hip-Hop / R&B / Dancehall", tracks: "20 Tracks", charts: "Studio Album Extraction",
-                songs: "1. Keep The Family Close\n2. 9\n3. U With Me?\n4. Feel No Ways\n5. Hype\n6. Weston Road Flows\n7. Redemption\n8. With You (feat. PARTYNEXTDOOR)\n9. Faithful (feat. Pimp C & dvsn)\n10. Still Here\n11. Controlla\n12. One Dance (feat. Wizkid & Kyla)\n13. Grammys (feat. Future)\n14. Childs Play\n15. Pop Style (feat. JAY-Z & Kanye West)\n16. Too Good (feat. Rihanna)\n17. Summers Over Interlude\n18. Fire & Desire\n19. Views\n20. Hotline Bling"
-            },
-            "What a Time to Be Alive": {
-                year: "Sep 20, 2015", genre: "Hip-Hop / Trap (w/ Future)", tracks: "11 Tracks", charts: "Collab Mixtape Pack",
-                songs: "1. Digital Dash\n2. Big Rings\n3. Live From The Gutter\n4. Scholarship\n5. Jumpman\n6. Diamonds Dancing\n7. Plastic Bag\n8. Change Locations\n9. 30 for 30 Freestyle\n10. Jersey\n11. Get Right (feat. Bryson Tiller)"
-            },
-            "If Youre Reading This Its Too Late": {
-                year: "Feb 13, 2015", genre: "Hip-Hop / Trap / Mixtape", tracks: "17 Tracks", charts: "Mixtape Extraction",
-                songs: "1. Legend\n2. Energy\n3. 10 Bands\n4. Know Yourself\n5. No Tellin'\n6. madonna\n7. 6 God\n8. Star67\n9. 6PM In New York\n10. You & The 6\n11. Preach\n12. 6 Man\n13. Now & Forever\n14. 3 Peat\n15. Company (feat. Travis Scott)\n16. Used To (feat. Lil Wayne)\n17. 6 Man (Outro)"
-            },
-            "Nothing Was The Same": {
-                year: "Sep 24, 2013", genre: "Hip-Hop / R&B", tracks: "15 Tracks (+2 Deluxe)", charts: "Studio Album Extraction",
-                songs: "1. Tuscan Leather\n2. Furthest Thing\n3. Started From The Bottom\n4. Wu-Tang Forever\n5. Own It\n6. Worst Behavior\n7. From Time (feat. Jhené Aiko)\n8. Hold On, We're Going Home (feat. Majid Jordan)\n9. Connect\n10. The Language\n11. 305 To My City (feat. Detail)\n12. Too Much (feat. Sampha)\n13. Pound Cake / Paris Morton Music 2 (feat. JAY-Z)\n14. Come Thru\n15. All Me (feat. 2 Chainz & Big Sean)\n— DELUXE —\n16. The Motion (feat. Sampha)\n17. Connect (Alternate)"
-            },
-            "Take Care": {
-                year: "Nov 15, 2011", genre: "Hip-Hop / R&B", tracks: "18 Tracks (+4 Deluxe)", charts: "Studio Album Extraction",
-                songs: "1. Over My Dead Body\n2. Shot For Me\n3. Headlines\n4. Crew Love (feat. The Weeknd)\n5. Take Care (feat. Rihanna)\n6. Marvins Room\n7. Buried Alive Interlude (feat. Kendrick Lamar)\n8. Under Ground Kings\n9. We'll Be Fine (feat. Birdman)\n10. Make Me Proud (feat. Nicki Minaj)\n11. Lord Knows (feat. Rick Ross)\n12. Cameras / Good Ones Go Interlude\n13. Doing It Wrong\n14. The Real Her (feat. Lil Wayne & André 3000)\n15. Look What You've Done\n16. HYFR (feat. Lil Wayne)\n17. Practice\n18. The Ride (feat. The Weeknd)\n— DELUXE —\n19. The Motto (feat. Lil Wayne)\n20. Hate Sleeping Alone\n21. Dreams Money Can Buy\n22. Right Here"
-            },
-            "Thank Me Later": {
-                year: "Jun 15, 2010", genre: "Hip-Hop / R&B", tracks: "14 Tracks", charts: "Studio Album Extraction",
-                songs: "1. Fireworks (feat. Alicia Keys)\n2. Karaoke\n3. The Resistance\n4. Over\n5. Show Me A Good Time\n6. Up All Night (feat. Nicki Minaj)\n7. Fancy (feat. T.I. & Swizz Beatz)\n8. Shut It Down (feat. The-Dream)\n9. Unforgettable (feat. Young Jeezy)\n10. Light Up (feat. JAY-Z)\n11. Miss Me (feat. Lil Wayne)\n12. Cece's Interlude\n13. Find Your Love\n14. Thank Me Now"
-            }
+            "ICEMAN": { year: "May 15, 2026", genre: "Hip-Hop / Rap", tracks: "18 Tracks", charts: "Studio Album Extraction", songs: "1. Make Them Cry\n2. Dust\n3. Whisper My Name\n4. Janice STFU\n5. Ran To Atlanta (feat. Future)\n6. Shabang\n7. Make Them Pay\n8. Burning Bridges\n9. National Treasures\n10. B's On The Table (feat. 21 Savage)\n11. What Did I Miss?\n12. Plot Twist\n13. 2 Hard 4 The Radio\n14. Make Them Remember\n15. Little Birdie\n16. Don't Worry\n17. Firm Friends\n18. Make Them Know" },
+            "HABIBTI": { year: "May 15, 2026", genre: "Hip-Hop / R&B", tracks: "10 Tracks", charts: "Studio Album Extraction", songs: "1. Rusty Intro\n2. WNBA\n3. Slap The City (feat. Qendresa)\n4. High Fives\n5. Hurrr Nor Thurrr (feat. Sexyy Red)\n6. I'm Spent (feat. Loe Shimmy)\n7. Classic\n8. Gen 5\n9. White Bone\n10. Fortworth (feat. PARTYNEXTDOOR)" },
+            "MAID OF HONOUR": { year: "May 15, 2026", genre: "Hip-Hop / R&B", tracks: "14 Tracks", charts: "Studio Album Extraction", songs: "1. Hoe Phase\n2. Road Trips\n3. Outside Tweaking (feat. Stunna Sandy)\n4. Cheetah Print (feat. Sexyy Red)\n5. Which One (feat. Central Cee)\n6. Amazing Shape (feat. Popcaan)\n7. BBW\n8. True Bestie (feat. Iconic Savvy)\n9. Where's Your Stuff\n10. Interlude\n11. New Bestie\n12. Q&A\n13. Stuck\n14. Goose and The Juice Princess" },
+            "$OME $EXY $ONGS 4 U": { year: "Feb 14, 2025", genre: "R&B / Slow Jam Collab", tracks: "21 Tracks", charts: "Collab Studio Pack", songs: "1. CN Tower\n2. Moth Balls\n3. $omething About You\n4. Crying In Chanel\n5. $pider-Man $uperman\n6. Deeper\n7. $mall Town Fame\n8. Pimmie's Dilemma (feat. Pim)\n9. Brian Steel\n10. Gimme A Hug\n11. Raining In Houston\n12. Lasers\n13. Meet Your Padre (feat. Chino Pacas)\n14. Nokia\n15. Die Trying (feat. Yebba)\n16. $omebody Loves Me\n17. Celibacy\n18. OMW\n19. Glorious (feat. Ice Spice)\n20. When He's Gone\n21. Outro" },
+            "For All The Dogs": { year: "Oct 6, 2023", genre: "Hip-Hop / Trap", tracks: "23 Tracks (+4 Bonus)", charts: "Studio Album Extraction", songs: "1. Action Needed (Intro)\n2. Slime You Out (feat. SZA)\n3. Virginia Beach\n4. Calling For You (feat. 21 Savage)\n5. Fear Of Heights\n6. Rich Baby Daddy (feat. Sexyy Red & SZA)\n7. 8AM In Charlotte\n8. Tried Our Best\n9. First Person Shooter (feat. J. Cole)\n10. Members Only\n11. Gently (feat. Bad Bunny)\n12. Bahamas Promises (feat. Giveon)\n13. Daylight\n14. Away From Home\n15. You Broke My Heart\n16. IDGAF (feat. Yeat)\n17. 7969 Santa\n18. Drew A Picasso\n19. All The Parties (feat. Chief Keef)\n20. Another Late Night (feat. Lil Yachty)\n21. BBL Drizzy\n22. 3AM On Glenwood\n23. $(Outro)\n— SCARY HOURS EDITION —\n24. Housekeeping Knows\n25. Red Button\n26. Medium Things (feat. Jazmine Sullivan)\n27. Polar Opposite (feat. J. Cole)" },
+            "Her Loss": { year: "Nov 4, 2022", genre: "Hip-Hop / Trap (w/ 21 Savage)", tracks: "14 Tracks", charts: "Collab Studio Pack", songs: "1. Rich Flex\n2. Major Distribution\n3. On BS\n4. Privileged Rappers\n5. Spin Bout U\n6. Broke Boys\n7. More M's\n8. Jimmy Cooks\n9. P Power\n10. BackOutsideBoyz\n11. Treacherous Twins\n12. Hours In Silence\n13. All The Parties\n14. I Guess It's Fuck Me" },
+            "Honestly Nevermind": { year: "Jun 17, 2022", genre: "Dance / House / R&B", tracks: "16 Tracks", charts: "Studio Album Extraction", songs: "1. Falling Back\n2. Texts Go Green\n3. Currents\n4. A Keeper\n5. Massive\n6. Flight's Booked\n7. Overdrive\n8. Down Hill\n9. Sticky (feat. Young Thug, Future & Swizz Beatz)\n10. Liability\n11. In The Bible (feat. Giveon & Lil Durk)\n12. Here & Now\n13. Calling My Name\n14. Tie That Binds\n15. Yebba's Heartbreak\n16. Jimmy Cooks (feat. 21 Savage)" },
+            "Certified Lover Boy": { year: "Sep 3, 2021", genre: "Hip-Hop / R&B", tracks: "21 Tracks", charts: "Studio Album Extraction", songs: "1. Champagne Poetry\n2. TSU\n3. Way 2 Sexy (feat. Future & Young Thug)\n4. Fair Trade (feat. Travis Scott)\n5. Pipe Down\n6. Wants and Needs (feat. Lil Baby)\n7. In The Bible (feat. Lil Durk & Giveon)\n8. Love All (feat. JAY-Z)\n9. Shot For Me\n10. Girls Want Girls (feat. Lil Baby)\n11. On The Radar (feat. Central Cee)\n12. Knife Talk (feat. 21 Savage & Project Pat)\n13. 7am On Bridle Path\n14. Papi's Home\n15. Get Along Better (feat. Ty Dolla $ign)\n16. You Only Live Twice (feat. Lil Wayne & Rick Ross)\n17. No Friends In The Industry\n18. IMY2 (feat. Kid Cudi)\n19. Yebba's Heartbreak\n20. TSU (Outro)" },
+            "Dark Lane Demo Tapes": { year: "May 1, 2020", genre: "Hip-Hop / Trap / Mixtape", tracks: "14 Tracks", charts: "Mixtape Extraction", songs: "1. Demons (feat. Fivio Foreign & Sosa Geek)\n2. When To Say When\n3. Chicago Freestyle (feat. Giveon)\n4. Pain 1993 (feat. Playboi Carti)\n5. Losses\n6. Blinding Lights (feat. The Weeknd)\n7. War (feat. 21 Savage)\n8. DESIRES (feat. Future)\n9. Time Flies\n10. Toosie Slide\n11. D4L (feat. Future, Young Thug & Playboi Carti)\n12. Not Around\n13. Life Is Good (feat. Future)" },
+            "Care Package": { year: "Aug 2, 2019", genre: "Hip-Hop / Compilation", tracks: "17 Tracks", charts: "Compilation Kit", songs: "1. Try Me\n2. Draft Day\n3. 5 AM In Toronto\n4. Furthest Thing (Demo)\n5. The Language (Demo)\n6. 0 To 100 / The Catch Up\n7. 6PM In New York\n8. How Bout Now\n9. My Side\n10. Back To Back\n11. 4PM In Calabasas\n12. Childs Play (Demo)\n13. Can I\n14. Jungle\n15. 6 God\n16. Summer Sixteen\n17. Diplomatic Immunity" },
+            "Scorpion": { year: "Jun 29, 2018", genre: "Hip-Hop / R&B / Double Album", tracks: "25 Tracks", charts: "Studio Album Extraction", songs: "— SIDE A —\n1. Survival\n2. Nonstop\n3. Elevate\n4. Emotionless\n5. God's Plan\n6. I'm Upset\n7. 8 Out Of 10\n8. Mob Ties\n9. Can't Take A Joke\n10. Sandra's Rose\n11. Talk Up (feat. JAY-Z)\n12. Is There More\n— SIDE B —\n13. Peak\n14. Summer Games\n15. Jaded\n16. Nice For What\n17. Finesse\n18. Ratchet Happy Birthday\n19. That's How You Feel\n20. Blue Tint\n21. In My Feelings\n22. Don't Matter To Me (feat. Michael Jackson)\n23. After Dark (feat. Static Major & Ty Dolla $ign)\n24. Final Fantasy\n25. March 14" },
+            "More Life": { year: "Mar 18, 2017", genre: "Dancehall / Afrobeats / Hip-Hop", tracks: "22 Tracks", charts: "Playlist Pack", songs: "1. More Life\n2. Passionfruit\n3. Jorja Interlude (feat. Jorja Smith)\n4. Get It Together (feat. Black Coffee & Jorja Smith)\n5. Madiba Riddim\n6. Blem\n7. 4422 (feat. Sampha)\n8. Gyalchester\n9. Skepta Interlude (feat. Skepta)\n10. Portland (feat. Quavo & Travis Scott)\n11. Sacrifices (feat. 2 Chainz & Young Thug)\n12. Nothings Into Somethings\n13. Teenage Fever\n14. KMT (feat. Giggs)\n15. Lose You\n16. Can't Have Everything\n17. Glow (feat. Kanye West)\n18. Since Way Back (feat. PARTYNEXTDOOR)\n19. Fake Love\n20. Ice Melts (feat. Young Thug)\n21. Do Not Disturb" },
+            "Views": { year: "Apr 29, 2016", genre: "Hip-Hop / R&B / Dancehall", tracks: "20 Tracks", charts: "Studio Album Extraction", songs: "1. Keep The Family Close\n2. 9\n3. U With Me?\n4. Feel No Ways\n5. Hype\n6. Weston Road Flows\n7. Redemption\n8. With You (feat. PARTYNEXTDOOR)\n9. Faithful (feat. Pimp C & dvsn)\n10. Still Here\n11. Controlla\n12. One Dance (feat. Wizkid & Kyla)\n13. Grammys (feat. Future)\n14. Childs Play\n15. Pop Style (feat. JAY-Z & Kanye West)\n16. Too Good (feat. Rihanna)\n17. Summers Over Interlude\n18. Fire & Desire\n19. Views\n20. Hotline Bling" },
+            "What a Time to Be Alive": { year: "Sep 20, 2015", genre: "Hip-Hop / Trap (w/ Future)", tracks: "11 Tracks", charts: "Collab Mixtape Pack", songs: "1. Digital Dash\n2. Big Rings\n3. Live From The Gutter\n4. Scholarship\n5. Jumpman\n6. Diamonds Dancing\n7. Plastic Bag\n8. Change Locations\n9. 30 for 30 Freestyle\n10. Jersey\n11. Get Right (feat. Bryson Tiller)" },
+            "If Youre Reading This Its Too Late": { year: "Feb 13, 2015", genre: "Hip-Hop / Trap / Mixtape", tracks: "17 Tracks", charts: "Mixtape Extraction", songs: "1. Legend\n2. Energy\n3. 10 Bands\n4. Know Yourself\n5. No Tellin'\n6. madonna\n7. 6 God\n8. Star67\n9. 6PM In New York\n10. You & The 6\n11. Preach\n12. 6 Man\n13. Now & Forever\n14. 3 Peat\n15. Company (feat. Travis Scott)\n16. Used To (feat. Lil Wayne)\n17. 6 Man (Outro)" },
+            "Nothing Was The Same": { year: "Sep 24, 2013", genre: "Hip-Hop / R&B", tracks: "15 Tracks (+2 Deluxe)", charts: "Studio Album Extraction", songs: "1. Tuscan Leather\n2. Furthest Thing\n3. Started From The Bottom\n4. Wu-Tang Forever\n5. Own It\n6. Worst Behavior\n7. From Time (feat. Jhené Aiko)\n8. Hold On, We're Going Home (feat. Majid Jordan)\n9. Connect\n10. The Language\n11. 305 To My City (feat. Detail)\n12. Too Much (feat. Sampha)\n13. Pound Cake / Paris Morton Music 2 (feat. JAY-Z)\n14. Come Thru\n15. All Me (feat. 2 Chainz & Big Sean)\n— DELUXE —\n16. The Motion (feat. Sampha)\n17. Connect (Alternate)" },
+            "Take Care": { year: "Nov 15, 2011", genre: "Hip-Hop / R&B", tracks: "18 Tracks (+4 Deluxe)", charts: "Studio Album Extraction", songs: "1. Over My Dead Body\n2. Shot For Me\n3. Headlines\n4. Crew Love (feat. The Weeknd)\n5. Take Care (feat. Rihanna)\n6. Marvins Room\n7. Buried Alive Interlude (feat. Kendrick Lamar)\n8. Under Ground Kings\n9. We'll Be Fine (feat. Birdman)\n10. Make Me Proud (feat. Nicki Minaj)\n11. Lord Knows (feat. Rick Ross)\n12. Cameras / Good Ones Go Interlude\n13. Doing It Wrong\n14. The Real Her (feat. Lil Wayne & André 3000)\n15. Look What You've Done\n16. HYFR (feat. Lil Wayne)\n17. Practice\n18. The Ride (feat. The Weeknd)\n— DELUXE —\n19. The Motto (feat. Lil Wayne)\n20. Hate Sleeping Alone\n21. Dreams Money Can Buy\n22. Right Here" },
+            "Thank Me Later": { year: "Jun 15, 2010", genre: "Hip-Hop / R&B", tracks: "14 Tracks", charts: "Studio Album Extraction", songs: "1. Fireworks (feat. Alicia Keys)\n2. Karaoke\n3. The Resistance\n4. Over\n5. Show Me A Good Time\n6. Up All Night (feat. Nicki Minaj)\n7. Fancy (feat. T.I. & Swizz Beatz)\n8. Shut It Down (feat. The-Dream)\n9. Unforgettable (feat. Young Jeezy)\n10. Light Up (feat. JAY-Z)\n11. Miss Me (feat. Lil Wayne)\n12. Cece's Interlude\n13. Find Your Love\n14. Thank Me Now" }
         };
 
         function applyTrackVolume() {
             const track = currentPlayedPool[currentPlaylistIndex];
             if (track) { videoBg.volume = volumeSlider.value * track.volMod; }
         }
-
         function manualVolumeAdjust(val) { applyTrackVolume(); }
 
         function regenerateShuffledPool() {
@@ -649,7 +893,6 @@
             document.getElementById('gui-album-title').innerText = albumName;
             document.getElementById('gui-album-cover').src = coverImg;
             globalDownloadLink = downloadLinksDatabase[albumName] || "https://drive.google.com/";
-
             const db = albumDatabase[albumName];
             if(db) {
                 document.getElementById('gui-year').innerText = db.year;
@@ -664,10 +907,8 @@
                 document.getElementById('gui-charts').innerText = "Varies";
                 document.getElementById('gui-tracks-list').innerText = "Loading data...";
             }
-
             const btn = document.getElementById('gui-download-btn');
             document.getElementById('gui-fallback').style.display = "none";
-
             if (!availableKits.includes(albumName)) {
                 btn.innerText = "NOT AVAILABLE";
                 btn.disabled = true;
