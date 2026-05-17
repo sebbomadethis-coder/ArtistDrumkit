@@ -24,7 +24,6 @@
             overflow-x: hidden;
         }
 
-        /* --- BACKGROUND SYSTEM --- */
         .bg-manager {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
             background: #040406; pointer-events: none;
@@ -43,7 +42,6 @@
             pointer-events: none;
         }
 
-        /* --- NAVIGATION --- */
         nav {
             position: fixed; top: 0; width: 100%; padding: 30px 60px;
             display: flex; justify-content: space-between; align-items: center; z-index: 100;
@@ -57,7 +55,6 @@
         .nav-link { color: var(--text-gray); text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; transition: 0.3s; cursor: pointer; }
         .nav-link:hover { color: var(--text-white); transform: translateY(-1px); }
 
-        /* --- SEARCHBAR SYSTEM --- */
         .search-box-container { width: 100%; max-width: 450px; margin-bottom: 40px; position: relative; z-index: 10; }
         .cool-search { width: 100%; padding: 16px 20px; background: var(--dark-glass); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; backdrop-filter: blur(10px); }
         .cool-search:focus { border-color: rgba(255,255,255,0.5); box-shadow: 0 0 15px rgba(255,255,255,0.1); }
@@ -66,11 +63,10 @@
         .suggestion-item:hover { background: rgba(255,255,255,0.1); }
         .suggestion-item img { width: 30px; height: 30px; border-radius: 4px; object-fit: cover; }
 
-        /* --- FAKE LIVE REVIEWS (English, smaller, bottom-right, Main Page only) --- */
         .live-reviews-container {
-            position: fixed; right: 30px; bottom: 135px; width: 280px; /* Smaller width */
+            position: fixed; right: 30px; bottom: 135px; width: 280px;
             display: flex; flex-direction: column-reverse; gap: 10px; pointer-events: none; z-index: 999;
-            display: none; /* Hidden by default, shown via JS on main page */
+            display: none;
         }
         .review-card {
             background: rgba(10, 10, 12, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -87,7 +83,6 @@
         @keyframes slideInRev { to { opacity: 1; transform: translateY(0); } }
         @keyframes slideOutRev { to { opacity: 0; transform: translateY(-15px) scale(0.96); filter: blur(4px); } }
 
-        /* --- VIEW MANAGEMENT --- */
         .view-section {
             min-height: 100vh; padding: 140px 40px 160px 40px;
             display: none; flex-direction: column; align-items: center; width: 100%; position: relative;
@@ -99,7 +94,6 @@
             to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        /* --- GRID & HUB CARDS --- */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px; width: 100%; max-width: 1200px; justify-content: center; position: relative; z-index: 1; }
         
         .card {
@@ -134,7 +128,6 @@
         .card h3, .card h2 { font-family: var(--font-display); font-size: 1.15rem; color: #fff; position: relative; z-index: 2; }
         .card p { color: var(--text-gray); font-size: 0.75rem; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; position: relative; z-index: 2; }
 
-        /* --- ANIMATED LIVE COUNTER --- */
         .live-counter-box {
             background: rgba(255, 255, 255, 0.04); border: 2px solid #ffffff; padding: 14px 32px; font-size: 0.9rem; font-weight: 700;
             text-transform: uppercase; letter-spacing: 2px; margin-bottom: 50px; display: inline-flex; align-items: center; gap: 14px; border-radius: 6px;
@@ -144,7 +137,6 @@
         #liveCounter { display: inline-block; transition: opacity 0.3s ease, transform 0.3s ease; }
         .counter-fade { opacity: 0; transform: translateY(-5px); }
 
-        /* --- ALBUM DOWNLOAD GUI --- */
         .album-gui-box {
             width: 100%; max-width: 950px; background: var(--dark-glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 40px; border: 1px solid var(--glass-border); border-radius: 16px;
             display: flex; gap: 35px; align-items: flex-start; animation: borderGlowPulse 4s infinite alternate;
@@ -161,9 +153,28 @@
         .gui-meta-item { font-size: 0.85rem; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
         .gui-meta-item strong { color: #fff; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; display: inline-block; width: 110px; }
 
-        .gui-tracklist-wrapper { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        .gui-tracklist-wrapper { 
+            background: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            overflow: visible; 
+            height: auto; 
+            max-height: none; 
+        }
         .gui-tracklist-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 10px; }
-        .gui-tracks-content { font-size: 0.78rem; color: #eee; line-height: 1.5; white-space: pre-line; column-count: 2; column-gap: 20px; }
+        .gui-tracks-content { 
+            font-size: 0.78rem; 
+            color: #eee; 
+            line-height: 1.7; 
+            white-space: pre-line; 
+            column-count: 2; 
+            column-gap: 20px; 
+            overflow: visible; 
+            height: auto; 
+            max-height: none;
+        }
 
         .btn {
             background: #fff; color: #000; padding: 18px; border: none; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; width: 100%; border-radius: 8px; transition: all 0.3s ease;
@@ -176,7 +187,6 @@
 
         .fallback-text { display: none; margin-top: 15px; font-size: 0.8rem; color: #ff0055; text-align: center; cursor: pointer; text-decoration: underline; font-weight: 600; }
 
-        /* --- CONTACT & REVIEWS --- */
         .glass-box { width: 100%; max-width: 600px; background: var(--dark-glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 45px; border: 1px solid var(--glass-border); border-radius: 16px; }
         h2.box-title { font-family: var(--font-display); font-weight: 800; text-align: center; margin-bottom: 5px; font-size: 1.75rem; text-transform: uppercase; }
         
@@ -196,7 +206,6 @@
         .star-rating-container svg:hover, .star-rating-container svg:hover ~ svg { fill: #00ff66; filter: drop-shadow(0 0 5px rgba(0,255,102,0.5)); }
         .star-rating-container svg.selected, .star-rating-container svg.selected ~ svg { fill: #00ff66; }
 
-        /* --- PLAYER BAR --- */
         .player-bar {
             position: fixed; bottom: -140px; left: 0; width: 100vw; height: 115px; background: rgba(4, 4, 6, 0.95); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border-top: 1px solid var(--glass-border);
             display: flex; align-items: center; justify-content: space-between; padding: 0 50px; z-index: 9999; transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.8);
@@ -283,19 +292,15 @@
             <div class="card" onclick="openAlbumGUI('ICEMAN', 'album_iceman.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_iceman.png" alt="Iceman"></div><h2>ICEMAN</h2><p>2026 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('HABIBTI', 'album_habibti.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_habibti.png" alt="Habibti"></div><h2>HABIBTI</h2><p>2026 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('MAID OF HONOUR', 'album_maidofhonour.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_maidofhonour.png" alt="Maid of Honour"></div><h2>MAID OF HONOUR</h2><p>2026 // EXTRACT KIT</p></div>
-            
             <div class="card" onclick="openAlbumGUI('$OME $EXY $ONGS 4 U', 'album_sss4u.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_sss4u.png" alt="SSS4U"></div><h2>$OME $EXY $ONGS 4 U</h2><p>2025 // COLLAB KIT</p></div>
             <div class="card" onclick="openAlbumGUI('For All The Dogs', 'album_forallthedogs.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_forallthedogs.png" alt="FATD"></div><h2>FOR ALL THE DOGS</h2><p>2023 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('Her Loss', 'album_herloss.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_herloss.png" alt="Her Loss"></div><h2>HER LOSS</h2><p>2022 // COLLAB KIT</p></div>
             <div class="card" onclick="openAlbumGUI('Honestly Nevermind', 'album_honestlynevermind.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_honestlynevermind.png" alt="Honestly Nevermind"></div><h2>HONESTLY, NEVERMIND</h2><p>2022 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('Certified Lover Boy', 'album_clb.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_clb.png" alt="CLB"></div><h2>CERTIFIED LOVER BOY</h2><p>2021 // EXTRACT KIT</p></div>
-            
             <div class="card" onclick="openAlbumGUI('Dark Lane Demo Tapes', 'album_dldt.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_dldt.png" alt="DLDT"></div><h2>DARK LANE DEMO TAPES</h2><p>2020 // MIXTAPE KIT</p></div>
             <div class="card" onclick="openAlbumGUI('Care Package', 'album_carepackage.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_carepackage.png" alt="Care Package"></div><h2>CARE PACKAGE</h2><p>2019 // COMPILATION KIT</p></div>
-            
             <div class="card" onclick="openAlbumGUI('Scorpion', 'album_scorpion.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_scorpion.png" alt="Scorpion"></div><h2>SCORPION</h2><p>2018 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('More Life', 'album_morelife.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_morelife.png" alt="More Life"></div><h2>MORE LIFE</h2><p>2017 // PLAYLIST KIT</p></div>
-            
             <div class="card" onclick="openAlbumGUI('Views', 'album_views.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_views.png" alt="Views"></div><h2>VIEWS</h2><p>2016 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('What a Time to Be Alive', 'album_wattba.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_wattba.png" alt="WATTBA"></div><h2>WHAT A TIME TO BE ALIVE</h2><p>2015 // COLLAB MIXTAPE</p></div>
             <div class="card" onclick="openAlbumGUI('If Youre Reading This Its Too Late', 'album_iyrtitl.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_iyrtitl.png" alt="IYRTITL"></div><h2>IF YOU'RE READING THIS IT'S TOO LATE</h2><p>2015 // MIXTAPE KIT</p></div>
@@ -310,22 +315,18 @@
             <div class="gui-left">
                 <img id="gui-album-cover" src="player_placeholder.png" alt="Album Cover">
             </div>
-            
             <div class="gui-right">
                 <h2 class="gui-title" id="gui-album-title">ALBUM TITLE</h2>
-                
                 <div class="gui-meta-list">
                     <div class="gui-meta-item"><strong>Release Date:</strong> <span id="gui-year">-</span></div>
                     <div class="gui-meta-item"><strong>Genre Vibe:</strong> <span id="gui-genre">-</span></div>
                     <div class="gui-meta-item"><strong>Anzahl Stems:</strong> <span id="gui-tracks">-</span></div>
                     <div class="gui-meta-item"><strong>Archive Type:</strong> <span id="gui-charts">-</span></div>
                 </div>
-
                 <div class="gui-tracklist-wrapper">
                     <div class="gui-tracklist-title">Contained Song Audio Stems:</div>
                     <div class="gui-tracks-content" id="gui-tracks-list">Loading song structure...</div>
                 </div>
-
                 <button class="btn" id="gui-download-btn" onclick="executeDownloadTimer()">DRUMKIT DRUMKIT</button>
                 <div class="fallback-text" id="gui-fallback" onclick="triggerManualLink()">If download doesn't start, click here</div>
             </div>
@@ -337,9 +338,7 @@
             <h2 class="box-title">CONTACT & REVIEWS</h2>
             <div class="trust-badge">⭐ Trusted by over 11.000+ Producers worldwide</div>
             <div class="contact-sub" style="width:100%;">Contact partner via Discord: <span>sebbomadethis</span></div>
-            
             <input type="text" id="rev-name" placeholder="YOUR DISCORD USERNAME (WITHOUT @)">
-            
             <div class="star-rating-container" id="starContainer">
                 <svg onclick="selectStar(5)" data-val="5" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                 <svg onclick="selectStar(4)" data-val="4" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -347,7 +346,6 @@
                 <svg onclick="selectStar(2)" data-val="2" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                 <svg onclick="selectStar(1)" data-val="1" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             </div>
-            
             <textarea id="rev-txt" rows="4" placeholder="WRITE YOUR FEEDBACK HERE..."></textarea>
             <button class="btn" onclick="fireReviewWebhook()">LOG TO ARCHIVE</button>
         </div>
@@ -378,7 +376,7 @@
     </div>
 
     <script>
-        const _uX = "YUhSMGNEb3ZMMlJwYzI5eVpDNWpiMjB2WVdsM0pXZGlhVzlyY3k4eE5UQTFNamt5T0RRd05ERXhOREUxT1Rrdk5EUVdaMllXU21kbWVXOW5SR0ZNWjNkM2VYZDNYbXBLZWZsRWNFMVRTbU0zWnpSM1pYcERhSGR6YmloM1FXUjJhMEE9PQ==";
+        const _uX = "YUhSMGNEb3ZMMlJwYzI5eVpDNWpiMjB2WVdsM0pXZGlhVzlyY3k4eE5UQTFNamt5T0RRd05ERXhOREUxT1Rrdk5EUVdaMllXU21kbWVXOW5SR0ZNWjNkM2VYZDNYbXBLZWZsRWNFMVRTbU0zWnpSM1pYcERhSGR6YmloM1FXUjJhMEE5PQ==";
         const _uY = "YUhSMGNEb3ZMMlJwYzI5eVpDNWpiMjB2WVdsM0pXZGlhVzlyY3k4eE5UQTFNamt6TlRRek9EWXhNRGt4T1RFdk1UZ0lJa3RXYU1wclEwOXBUMU5vWldkallZbG5ZV05RUWpOSmRsZHpObW8xWWpObldrdG1lVnBxZVRwaWFWOXzTzUwVFE9PQ==";
         function _solve(s) { try { return atob(atob(s)); } catch(e) { return ""; } }
 
@@ -401,15 +399,14 @@
 
         let selectedKit = "";
         let isScrubbing = false;
-        let globalDownloadLink = ""; 
+        let globalDownloadLink = "";
         let currentActiveView = "artists-view";
         let previousView = "artists-view";
         let counterValue = 51;
         let countingUp = true;
-        let isUnlocked = false; 
+        let isUnlocked = false;
         let selectedStarValue = 0;
 
-        // Musik Lautstärke Initialisierung
         videoBg.volume = 0.25;
 
         const drakePlaylist = [
@@ -436,22 +433,86 @@
         };
 
         const albumDatabase = {
-            "ICEMAN": { year: "May 15, 2026", genre: "Hip-Hop / Rap / Future Sound", tracks: "18 Tracks", charts: "Studio Album Extraction", songs: "1. Make Them Cry\n2. Dust\n3. Whisper My Name\n4. Janice STFU\n5. Ran To Atlanta (feat. Future)\n6. Shabang\n7. Make Them Pay\n8. Burning Bridges\n9. National Treasures\n10. B's On The Table (feat. 21 Savage)\n11. What Did I Miss?\n12. Plot Twist\n13. 2 Hard 4 The Radio\n14. Make Them Remember\n15. Little Birdie\n16. Don't Worry\n17. Firm Friends\n18. Make Them Know" },
-            "$OME $EXY $ONGS 4 U": { year: "Feb 14, 2025", genre: "R&B / Slow Jam Collab", tracks: "21 Tracks", charts: "Collab Studio Pack", songs: "1. CN Tower\n2. Moth Balls\n3. $omething About You\n4. Crying In Chanel\n5. $pider-Man $uperman\n..." }
-            // ...metadata for other albums translated below in GUI function
+            "ICEMAN": {
+                year: "May 15, 2026", genre: "Hip-Hop / Rap", tracks: "18 Tracks", charts: "Studio Album Extraction",
+                songs: "1. Make Them Cry\n2. Dust\n3. Whisper My Name\n4. Janice STFU\n5. Ran To Atlanta (feat. Future)\n6. Shabang\n7. Make Them Pay\n8. Burning Bridges\n9. National Treasures\n10. B's On The Table (feat. 21 Savage)\n11. What Did I Miss?\n12. Plot Twist\n13. 2 Hard 4 The Radio\n14. Make Them Remember\n15. Little Birdie\n16. Don't Worry\n17. Firm Friends\n18. Make Them Know"
+            },
+            "HABIBTI": {
+                year: "May 15, 2026", genre: "Hip-Hop / R&B", tracks: "10 Tracks", charts: "Studio Album Extraction",
+                songs: "1. Rusty Intro\n2. WNBA\n3. Slap The City (feat. Qendresa)\n4. High Fives\n5. Hurrr Nor Thurrr (feat. Sexyy Red)\n6. I'm Spent (feat. Loe Shimmy)\n7. Classic\n8. Gen 5\n9. White Bone\n10. Fortworth (feat. PARTYNEXTDOOR)"
+            },
+            "MAID OF HONOUR": {
+                year: "May 15, 2026", genre: "Hip-Hop / R&B", tracks: "14 Tracks", charts: "Studio Album Extraction",
+                songs: "1. Hoe Phase\n2. Road Trips\n3. Outside Tweaking (feat. Stunna Sandy)\n4. Cheetah Print (feat. Sexyy Red)\n5. Which One (feat. Central Cee)\n6. Amazing Shape (feat. Popcaan)\n7. BBW\n8. True Bestie (feat. Iconic Savvy)\n9. Where's Your Stuff\n10. Interlude\n11. New Bestie\n12. Q&A\n13. Stuck\n14. Goose and The Juice Princess"
+            },
+            "$OME $EXY $ONGS 4 U": {
+                year: "Feb 14, 2025", genre: "R&B / Slow Jam Collab", tracks: "21 Tracks", charts: "Collab Studio Pack",
+                songs: "1. CN Tower\n2. Moth Balls\n3. $omething About You\n4. Crying In Chanel\n5. $pider-Man $uperman\n6. Deeper\n7. $mall Town Fame\n8. Pimmie's Dilemma (feat. Pim)\n9. Brian Steel\n10. Gimme A Hug\n11. Raining In Houston\n12. Lasers\n13. Meet Your Padre (feat. Chino Pacas)\n14. Nokia\n15. Die Trying (feat. Yebba)\n16. $omebody Loves Me\n17. Celibacy\n18. OMW\n19. Glorious (feat. Ice Spice)\n20. When He's Gone\n21. Outro"
+            },
+            "For All The Dogs": {
+                year: "Oct 6, 2023", genre: "Hip-Hop / Trap", tracks: "23 Tracks (+4 Bonus)", charts: "Studio Album Extraction",
+                songs: "1. Action Needed (Intro)\n2. Slime You Out (feat. SZA)\n3. Virginia Beach\n4. Calling For You (feat. 21 Savage)\n5. Fear Of Heights\n6. Rich Baby Daddy (feat. Sexyy Red & SZA)\n7. 8AM In Charlotte\n8. Tried Our Best\n9. First Person Shooter (feat. J. Cole)\n10. Members Only\n11. Gently (feat. Bad Bunny)\n12. Bahamas Promises (feat. Giveon)\n13. Daylight\n14. Away From Home\n15. You Broke My Heart\n16. IDGAF (feat. Yeat)\n17. 7969 Santa\n18. Drew A Picasso\n19. All The Parties (feat. Chief Keef)\n20. Another Late Night (feat. Lil Yachty)\n21. BBL Drizzy\n22. 3AM On Glenwood\n23. $(Outro)\n— SCARY HOURS EDITION —\n24. Housekeeping Knows\n25. Red Button\n26. Medium Things (feat. Jazmine Sullivan)\n27. Polar Opposite (feat. J. Cole)"
+            },
+            "Her Loss": {
+                year: "Nov 4, 2022", genre: "Hip-Hop / Trap (w/ 21 Savage)", tracks: "14 Tracks", charts: "Collab Studio Pack",
+                songs: "1. Rich Flex\n2. Major Distribution\n3. On BS\n4. Privileged Rappers\n5. Spin Bout U\n6. Broke Boys\n7. More M's\n8. Jimmy Cooks\n9. P Power\n10. BackOutsideBoyz\n11. Treacherous Twins\n12. Hours In Silence\n13. All The Parties\n14. I Guess It's Fuck Me"
+            },
+            "Honestly Nevermind": {
+                year: "Jun 17, 2022", genre: "Dance / House / R&B", tracks: "16 Tracks", charts: "Studio Album Extraction",
+                songs: "1. Falling Back\n2. Texts Go Green\n3. Currents\n4. A Keeper\n5. Massive\n6. Flight's Booked\n7. Overdrive\n8. Down Hill\n9. Sticky (feat. Young Thug, Future & Swizz Beatz)\n10. Liability\n11. In The Bible (feat. Giveon & Lil Durk)\n12. Here & Now\n13. Calling My Name\n14. Tie That Binds\n15. Yebba's Heartbreak\n16. Jimmy Cooks (feat. 21 Savage)"
+            },
+            "Certified Lover Boy": {
+                year: "Sep 3, 2021", genre: "Hip-Hop / R&B", tracks: "21 Tracks", charts: "Studio Album Extraction",
+                songs: "1. Champagne Poetry\n2. TSU\n3. Way 2 Sexy (feat. Future & Young Thug)\n4. Fair Trade (feat. Travis Scott)\n5. Pipe Down\n6. Wants and Needs (feat. Lil Baby)\n7. In The Bible (feat. Lil Durk & Giveon)\n8. Love All (feat. JAY-Z)\n9. Shot For Me\n10. Girls Want Girls (feat. Lil Baby)\n11. On The Radar (feat. Central Cee)\n12. Knife Talk (feat. 21 Savage & Project Pat)\n13. 7am On Bridle Path\n14. Papi's Home\n15. Get Along Better (feat. Ty Dolla $ign)\n16. You Only Live Twice (feat. Lil Wayne & Rick Ross)\n17. No Friends In The Industry\n18. IMY2 (feat. Kid Cudi)\n19. Yebba's Heartbreak\n20. TSU (Outro)"
+            },
+            "Dark Lane Demo Tapes": {
+                year: "May 1, 2020", genre: "Hip-Hop / Trap / Mixtape", tracks: "14 Tracks", charts: "Mixtape Extraction",
+                songs: "1. Demons (feat. Fivio Foreign & Sosa Geek)\n2. When To Say When\n3. Chicago Freestyle (feat. Giveon)\n4. Pain 1993 (feat. Playboi Carti)\n5. Losses\n6. Blinding Lights (feat. The Weeknd)\n7. War (feat. 21 Savage)\n8. DESIRES (feat. Future)\n9. Time Flies\n10. Toosie Slide\n11. D4L (feat. Future, Young Thug & Playboi Carti)\n12. Not Around\n13. Life Is Good (feat. Future)"
+            },
+            "Care Package": {
+                year: "Aug 2, 2019", genre: "Hip-Hop / Compilation", tracks: "17 Tracks", charts: "Compilation Kit",
+                songs: "1. Try Me\n2. Draft Day\n3. 5 AM In Toronto\n4. Furthest Thing (Demo)\n5. The Language (Demo)\n6. 0 To 100 / The Catch Up\n7. 6PM In New York\n8. How Bout Now\n9. My Side\n10. Back To Back\n11. 4PM In Calabasas\n12. Childs Play (Demo)\n13. Can I\n14. Jungle\n15. 6 God\n16. Summer Sixteen\n17. Diplomatic Immunity"
+            },
+            "Scorpion": {
+                year: "Jun 29, 2018", genre: "Hip-Hop / R&B / Double Album", tracks: "25 Tracks", charts: "Studio Album Extraction",
+                songs: "— SIDE A —\n1. Survival\n2. Nonstop\n3. Elevate\n4. Emotionless\n5. God's Plan\n6. I'm Upset\n7. 8 Out Of 10\n8. Mob Ties\n9. Can't Take A Joke\n10. Sandra's Rose\n11. Talk Up (feat. JAY-Z)\n12. Is There More\n— SIDE B —\n13. Peak\n14. Summer Games\n15. Jaded\n16. Nice For What\n17. Finesse\n18. Ratchet Happy Birthday\n19. That's How You Feel\n20. Blue Tint\n21. In My Feelings\n22. Don't Matter To Me (feat. Michael Jackson)\n23. After Dark (feat. Static Major & Ty Dolla $ign)\n24. Final Fantasy\n25. March 14"
+            },
+            "More Life": {
+                year: "Mar 18, 2017", genre: "Dancehall / Afrobeats / Hip-Hop", tracks: "22 Tracks", charts: "Playlist Pack",
+                songs: "1. More Life\n2. Passionfruit\n3. Jorja Interlude (feat. Jorja Smith)\n4. Get It Together (feat. Black Coffee & Jorja Smith)\n5. Madiba Riddim\n6. Blem\n7. 4422 (feat. Sampha)\n8. Gyalchester\n9. Skepta Interlude (feat. Skepta)\n10. Portland (feat. Quavo & Travis Scott)\n11. Sacrifices (feat. 2 Chainz & Young Thug)\n12. Nothings Into Somethings\n13. Teenage Fever\n14. KMT (feat. Giggs)\n15. Lose You\n16. Can't Have Everything\n17. Glow (feat. Kanye West)\n18. Since Way Back (feat. PARTYNEXTDOOR)\n19. Fake Love\n20. Ice Melts (feat. Young Thug)\n21. Do Not Disturb"
+            },
+            "Views": {
+                year: "Apr 29, 2016", genre: "Hip-Hop / R&B / Dancehall", tracks: "20 Tracks", charts: "Studio Album Extraction",
+                songs: "1. Keep The Family Close\n2. 9\n3. U With Me?\n4. Feel No Ways\n5. Hype\n6. Weston Road Flows\n7. Redemption\n8. With You (feat. PARTYNEXTDOOR)\n9. Faithful (feat. Pimp C & dvsn)\n10. Still Here\n11. Controlla\n12. One Dance (feat. Wizkid & Kyla)\n13. Grammys (feat. Future)\n14. Childs Play\n15. Pop Style (feat. JAY-Z & Kanye West)\n16. Too Good (feat. Rihanna)\n17. Summers Over Interlude\n18. Fire & Desire\n19. Views\n20. Hotline Bling"
+            },
+            "What a Time to Be Alive": {
+                year: "Sep 20, 2015", genre: "Hip-Hop / Trap (w/ Future)", tracks: "11 Tracks", charts: "Collab Mixtape Pack",
+                songs: "1. Digital Dash\n2. Big Rings\n3. Live From The Gutter\n4. Scholarship\n5. Jumpman\n6. Diamonds Dancing\n7. Plastic Bag\n8. Change Locations\n9. 30 for 30 Freestyle\n10. Jersey\n11. Get Right (feat. Bryson Tiller)"
+            },
+            "If Youre Reading This Its Too Late": {
+                year: "Feb 13, 2015", genre: "Hip-Hop / Trap / Mixtape", tracks: "17 Tracks", charts: "Mixtape Extraction",
+                songs: "1. Legend\n2. Energy\n3. 10 Bands\n4. Know Yourself\n5. No Tellin'\n6. madonna\n7. 6 God\n8. Star67\n9. 6PM In New York\n10. You & The 6\n11. Preach\n12. 6 Man\n13. Now & Forever\n14. 3 Peat\n15. Company (feat. Travis Scott)\n16. Used To (feat. Lil Wayne)\n17. 6 Man (Outro)"
+            },
+            "Nothing Was The Same": {
+                year: "Sep 24, 2013", genre: "Hip-Hop / R&B", tracks: "15 Tracks (+2 Deluxe)", charts: "Studio Album Extraction",
+                songs: "1. Tuscan Leather\n2. Furthest Thing\n3. Started From The Bottom\n4. Wu-Tang Forever\n5. Own It\n6. Worst Behavior\n7. From Time (feat. Jhené Aiko)\n8. Hold On, We're Going Home (feat. Majid Jordan)\n9. Connect\n10. The Language\n11. 305 To My City (feat. Detail)\n12. Too Much (feat. Sampha)\n13. Pound Cake / Paris Morton Music 2 (feat. JAY-Z)\n14. Come Thru\n15. All Me (feat. 2 Chainz & Big Sean)\n— DELUXE —\n16. The Motion (feat. Sampha)\n17. Connect (Alternate)"
+            },
+            "Take Care": {
+                year: "Nov 15, 2011", genre: "Hip-Hop / R&B", tracks: "18 Tracks (+4 Deluxe)", charts: "Studio Album Extraction",
+                songs: "1. Over My Dead Body\n2. Shot For Me\n3. Headlines\n4. Crew Love (feat. The Weeknd)\n5. Take Care (feat. Rihanna)\n6. Marvins Room\n7. Buried Alive Interlude (feat. Kendrick Lamar)\n8. Under Ground Kings\n9. We'll Be Fine (feat. Birdman)\n10. Make Me Proud (feat. Nicki Minaj)\n11. Lord Knows (feat. Rick Ross)\n12. Cameras / Good Ones Go Interlude\n13. Doing It Wrong\n14. The Real Her (feat. Lil Wayne & André 3000)\n15. Look What You've Done\n16. HYFR (feat. Lil Wayne)\n17. Practice\n18. The Ride (feat. The Weeknd)\n— DELUXE —\n19. The Motto (feat. Lil Wayne)\n20. Hate Sleeping Alone\n21. Dreams Money Can Buy\n22. Right Here"
+            },
+            "Thank Me Later": {
+                year: "Jun 15, 2010", genre: "Hip-Hop / R&B", tracks: "14 Tracks", charts: "Studio Album Extraction",
+                songs: "1. Fireworks (feat. Alicia Keys)\n2. Karaoke\n3. The Resistance\n4. Over\n5. Show Me A Good Time\n6. Up All Night (feat. Nicki Minaj)\n7. Fancy (feat. T.I. & Swizz Beatz)\n8. Shut It Down (feat. The-Dream)\n9. Unforgettable (feat. Young Jeezy)\n10. Light Up (feat. JAY-Z)\n11. Miss Me (feat. Lil Wayne)\n12. Cece's Interlude\n13. Find Your Love\n14. Thank Me Now"
+            }
         };
 
-        // --- LAUTSTÄRKEN LOGIK ---
         function applyTrackVolume() {
             const track = currentPlayedPool[currentPlaylistIndex];
-            if (track) {
-                videoBg.volume = volumeSlider.value * track.volMod; 
-            }
+            if (track) { videoBg.volume = volumeSlider.value * track.volMod; }
         }
 
-        function manualVolumeAdjust(val) {
-            applyTrackVolume();
-        }
+        function manualVolumeAdjust(val) { applyTrackVolume(); }
 
         function regenerateShuffledPool() {
             currentPlayedPool = [...drakePlaylist];
@@ -477,26 +538,18 @@
             if (currentPlayedPool.length === 0 || currentPlaylistIndex >= currentPlayedPool.length - 1) {
                 const lastTrack = currentPlayedPool[currentPlayedPool.length - 1];
                 do { regenerateShuffledPool(); } while (currentPlayedPool[0].name === lastTrack.name);
-            } else {
-                currentPlaylistIndex++;
-            }
+            } else { currentPlaylistIndex++; }
             loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]);
         }
 
         function playPreviousRandom() {
-            if (currentPlaylistIndex > 0) {
-                currentPlaylistIndex--;
-                loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]);
-            }
+            if (currentPlaylistIndex > 0) { currentPlaylistIndex--; loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]); }
         }
 
-        // --- NAVIGATION LOGIK (English translations within alerts) ---
         function navigateTo(viewId) {
             currentActiveView = viewId;
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
-            
-            // Handle Review Feed visibility (Only on Main Page)
             if (viewId === 'artists-view') {
                 reviewFeedContainer.style.display = 'flex';
                 backBtn.style.display = "none";
@@ -505,29 +558,20 @@
                 videoBg.style.display = "none";
                 staticBg.style.display = "block";
             } else {
-                reviewFeedContainer.style.display = 'none'; // Hide everywhere else
+                reviewFeedContainer.style.display = 'none';
                 backBtn.style.display = "inline-block";
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function goToReviews() {
-            previousView = currentActiveView;
-            navigateTo('reviews-view');
-        }
+        function goToReviews() { previousView = currentActiveView; navigateTo('reviews-view'); }
 
         function handleBackNavigation() {
             if (currentActiveView === 'reviews-view') {
-                if (previousView === 'albums-view' || previousView === 'download-view') {
-                    navigateTo(previousView); 
-                } else {
-                    navigateTo('artists-view');
-                }
-            } else if (currentActiveView === 'download-view') { 
-                navigateTo('albums-view'); 
-            } else { 
-                navigateTo('artists-view'); 
-            }
+                if (previousView === 'albums-view' || previousView === 'download-view') { navigateTo(previousView); }
+                else { navigateTo('artists-view'); }
+            } else if (currentActiveView === 'download-view') { navigateTo('albums-view'); }
+            else { navigateTo('artists-view'); }
             document.getElementById('mainSearchInput').value = "";
             searchSuggestionsBox.style.display = "none";
         }
@@ -538,16 +582,10 @@
             staticBg.style.display = "none";
             videoBg.style.display = "block";
             playerElement.classList.add('visible');
-            
-            if (currentActiveView === 'artists-view') {
-                regenerateShuffledPool();
-                loadPlaylistTrack(currentPlayedPool[0]);
-            }
-
+            if (currentActiveView === 'artists-view') { regenerateShuffledPool(); loadPlaylistTrack(currentPlayedPool[0]); }
             navigateTo('albums-view');
         }
 
-        // --- FAKE LIVE REVIEWS SYSTEM (English & Realistic Text) ---
         const fakeUsersData = ["kay00pium", "wodka_0", "nemo6.9", "prodbyKay", "808mafia_fan", "drizzy_boy"];
         const fakeTextsData = [
             "These CLB 808s hit crazy. Thanks for the drop!",
@@ -557,31 +595,21 @@
             "Just cookin' up with the FATD extract, stems are top tier.",
             "Bro, these Her Loss snares are crisp. Best hub out here."
         ];
-        
         let activeReviews = [];
 
         function createFakeReviewHTML(user, text) {
             const div = document.createElement('div');
             div.className = 'review-card';
-            div.innerHTML = `
-                <div class="rev-header">
-                    <span class="rev-user">@${user}</span>
-                    <span class="rev-stars">★★★★★</span>
-                </div>
-                <div class="rev-text">"${text}"</div>
-            `;
+            div.innerHTML = `<div class="rev-header"><span class="rev-user">@${user}</span><span class="rev-stars">★★★★★</span></div><div class="rev-text">"${text}"</div>`;
             return div;
         }
 
         function spawnFakeReview() {
             const randomUser = fakeUsersData[Math.floor(Math.random() * fakeUsersData.length)];
             const randomText = fakeTextsData[Math.floor(Math.random() * fakeTextsData.length)];
-            
             const newRevNode = createFakeReviewHTML(randomUser, randomText);
             reviewFeedContainer.prepend(newRevNode);
             activeReviews.unshift(newRevNode);
-
-            // Keep max 2 reviews visible
             if (activeReviews.length > 2) {
                 const oldestNode = activeReviews.pop();
                 oldestNode.classList.add('leaving');
@@ -589,12 +617,10 @@
             }
         }
 
-        // Intervals (Still 15s, initial spawns for feel)
         setTimeout(spawnFakeReview, 800);
         setTimeout(spawnFakeReview, 4000);
         setInterval(spawnFakeReview, 15000);
 
-        // --- WEBHOOK & INTERACTION FUNKTIONEN (Translated Alerts) ---
         function selectStar(val) {
             selectedStarValue = val;
             const stars = document.querySelectorAll('.star-rating-container svg');
@@ -607,21 +633,19 @@
             const name = document.getElementById('rev-name').value.trim();
             const txt = document.getElementById('rev-txt').value.trim();
             if(!selectedStarValue || !txt || !name) return alert("Please fill all fields and select a star rating.");
-
             fetch(_solve(_uY), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: `💬 **NEW REVIEW LOGGED**\nUser: \`${name}\`\nRating: ${"⭐".repeat(selectedStarValue)}/5\nMessage:\n\`\`\`${txt}\`\`\`` })
             }).then(() => {
                 alert("Review successfully logged to the archive!");
-                document.getElementById('rev-name').value = ""; document.getElementById('rev-txt').value = ""; 
+                document.getElementById('rev-name').value = ""; document.getElementById('rev-txt').value = "";
                 selectStar(0);
             });
         }
 
         function openAlbumGUI(albumName, coverImg) {
             selectedKit = albumName;
-            isUnlocked = false; 
+            isUnlocked = false;
             document.getElementById('gui-album-title').innerText = albumName;
             document.getElementById('gui-album-cover').src = coverImg;
             globalDownloadLink = downloadLinksDatabase[albumName] || "https://drive.google.com/";
@@ -634,7 +658,6 @@
                 document.getElementById('gui-charts').innerText = db.charts;
                 document.getElementById('gui-tracks-list').innerText = db.songs;
             } else {
-                // Translation fallback for specific metadata not hardcoded
                 document.getElementById('gui-year').innerText = "Varies";
                 document.getElementById('gui-genre').innerText = "Varies";
                 document.getElementById('gui-tracks').innerText = "Varies";
@@ -643,7 +666,7 @@
             }
 
             const btn = document.getElementById('gui-download-btn');
-            document.getElementById('gui-fallback').style.display = "none"; 
+            document.getElementById('gui-fallback').style.display = "none";
 
             if (!availableKits.includes(albumName)) {
                 btn.innerText = "NOT AVAILABLE";
@@ -655,7 +678,6 @@
                 btn.disabled = false;
                 btn.classList.remove('not-available-btn', 'unlocked-btn');
             }
-
             navigateTo('download-view');
         }
 
@@ -663,39 +685,29 @@
             if (!availableKits.includes(selectedKit)) return;
             const btn = document.getElementById('gui-download-btn');
             const fallback = document.getElementById('gui-fallback');
-
-            if (isUnlocked) {
-                window.open(globalDownloadLink, '_blank');
-                fallback.style.display = "block"; 
-                return;
-            }
-
+            if (isUnlocked) { window.open(globalDownloadLink, '_blank'); fallback.style.display = "block"; return; }
             let timeLeft = 5;
             btn.disabled = true;
-            btn.innerText = `PLEASE WAIT... (${timeLeft}s)`; 
-
+            btn.innerText = `PLEASE WAIT... (${timeLeft}s)`;
             fetch(_solve(_uX), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: `📥 **DOWNLOAD SEQUENCE STARTED**\nAlbum: **${selectedKit}**` })
             });
-
             const countdown = setInterval(() => {
                 timeLeft--;
-                if(timeLeft > 0) { btn.innerText = `PLEASE WAIT... (${timeLeft}s)`; } 
+                if(timeLeft > 0) { btn.innerText = `PLEASE WAIT... (${timeLeft}s)`; }
                 else {
                     clearInterval(countdown);
                     isUnlocked = true;
-                    btn.disabled = false; 
-                    btn.innerText = "DOWNLOAD NOW ✔"; 
-                    btn.classList.add('unlocked-btn'); 
+                    btn.disabled = false;
+                    btn.innerText = "DOWNLOAD NOW ✔";
+                    btn.classList.add('unlocked-btn');
                 }
             }, 1000);
         }
 
         function triggerManualLink() { window.open(globalDownloadLink, '_blank'); }
 
-        // Audio Player Controls & Timeline Logic (English standby text)
         function toggleAudio() {
             if (videoBg.paused) { videoBg.play(); svgPlayIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; visBox.classList.add('moving'); }
             else { videoBg.pause(); svgPlayIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; visBox.classList.remove('moving'); }
@@ -723,21 +735,22 @@
         function endScrub(e) {
             if (isScrubbing) {
                 const rect = timelineTrack.getBoundingClientRect(); let pct = (e.clientX - rect.left) / rect.width;
-                if (pct < 0) pct = 0; if (pct > 1) pct = 1; if (videoBg.duration) { videoBg.currentTime = pct * videoBg.duration; }
+                if (pct < 0) pct = 0; if (pct > 1) pct = 1;
+                if (videoBg.duration) { videoBg.currentTime = pct * videoBg.duration; }
                 isScrubbing = false; window.removeEventListener('mousemove', processScrub); window.removeEventListener('mouseup', endScrub);
             }
         }
 
         function handleSearchProgression(val) {
             const cleanVal = val.toLowerCase().trim();
-            if (["d", "dr", "dra", "drak", "drake"].includes(cleanVal)) { searchSuggestionsBox.style.display = "block"; } 
+            if (["d", "dr", "dra", "drak", "drake"].includes(cleanVal)) { searchSuggestionsBox.style.display = "block"; }
             else { searchSuggestionsBox.style.display = "none"; }
         }
 
         setInterval(() => {
             const counter = document.getElementById('liveCounter');
             if(!counter) return;
-            if (countingUp) { counterValue++; if (counterValue >= 55) countingUp = false; } 
+            if (countingUp) { counterValue++; if (counterValue >= 55) countingUp = false; }
             else { counterValue--; if (counterValue <= 51) countingUp = true; }
             counter.classList.add('counter-fade');
             setTimeout(() => { counter.innerText = counterValue; counter.classList.remove('counter-fade'); }, 300);
