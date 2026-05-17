@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTIST DRUMKIT ARCHIVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --dark-glass: rgba(15, 15, 15, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-white: #ffffff;
+            --text-gray: #dddddd;
+            --font-display: 'Syne', sans-serif;
+            --font-ui: 'Space Grotesk', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
+        
+        body {
+            background: #040406;
+            color: var(--text-white);
+            overflow-x: hidden;
+        }
+
+        /* --- BACKGROUND SYSTEM --- */
+        .bg-manager {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+            background: #040406; pointer-events: none;
+        }
+        #main-static-bg {
+            position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.3;
+            filter: contrast(120%); display: block;
+        }
+        #drake-video-bg {
+            position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.75;
+            filter: contrast(110%) brightness(100%); display: none;
+        }
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(4,4,6,0.85) 95%);
+            pointer-events: none;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 30px 60px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
+            background: rgba(4, 4, 6, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .nav-left { display: flex; align-items: center; gap: 20px; }
+        .logo { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; cursor: pointer; }
+        .back-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600; transition: 0.3s; text-transform: uppercase; }
+        .back-btn:hover { background: #fff; color: #000; }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-link { color: var(--text-gray); text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; transition: 0.3s; cursor: pointer; }
+        .nav-link:hover { color: var(--text-white); transform: translateY(-1px); }
+
+        /* --- SEARCHBAR SYSTEM --- */
+        .search-box-container { width: 100%; max-width: 450px; margin-bottom: 40px; position: relative; z-index: 10; }
+        .cool-search { width: 100%; padding: 16px 20px; background: var(--dark-glass); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; backdrop-filter: blur(10px); }
+        .cool-search:focus { border-color: rgba(255,255,255,0.5); box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+        .search-suggestions { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: rgba(20,20,22,0.95); border: 1px solid var(--glass-border); border-radius: 8px; z-index: 10; display: none; overflow: hidden; backdrop-filter: blur(20px); }
+        .suggestion-item { padding: 14px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .suggestion-item:hover { background: rgba(255,255,255,0.1); }
+        .suggestion-item img { width: 30px; height: 30px; border-radius: 4px; object-fit: cover; }
+
+        /* --- FAKE LIVE REVIEWS (English, smaller, bottom-right, Main Page only) --- */
+        .live-reviews-container {
+            position: fixed; right: 30px; bottom: 135px; width: 280px; /* Smaller width */
+            display: flex; flex-direction: column-reverse; gap: 10px; pointer-events: none; z-index: 999;
+            display: none; /* Hidden by default, shown via JS on main page */
+        }
+        .review-card {
+            background: rgba(10, 10, 12, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px 15px; opacity: 0; 
+            transform: translateY(15px); animation: slideInRev 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .review-card.leaving { animation: slideOutRev 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .rev-header { display: flex; justify-content: space-between; margin-bottom: 5px; align-items: center; }
+        .rev-user { font-weight: 700; font-size: 0.8rem; color: #fff; letter-spacing: 0.3px; }
+        .rev-stars { color: #00ff66; font-size: 0.75rem; letter-spacing: 1px; }
+        .rev-text { font-size: 0.75rem; color: #cccccc; line-height: 1.4; font-style: italic; }
+
+        @keyframes slideInRev { to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideOutRev { to { opacity: 0; transform: translateY(-15px) scale(0.96); filter: blur(4px); } }
+
+        /* --- VIEW MANAGEMENT --- */
+        .view-section {
+            min-height: 100vh; padding: 140px 40px 160px 40px;
+            display: none; flex-direction: column; align-items: center; width: 100%; position: relative;
+        }
+        .view-section.active { display: flex; animation: viewSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes viewSlideUp {
+            from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* --- GRID & HUB CARDS --- */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px; width: 100%; max-width: 1200px; justify-content: center; position: relative; z-index: 1; }
+        
+        .card {
+            background: var(--dark-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); padding: 30px; border-radius: 12px; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); text-align: center;
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            outline: none;
+        }
+        
+        .card.artist-card-drake {
+            background: linear-gradient(rgba(15, 15, 15, 0.75), rgba(15, 15, 15, 0.85)), url('artist_card_bg.png');
+            background-size: cover; background-position: center;
+        }
+        
+        .card:hover { border-color: rgba(255,255,255,0.7); transform: translateY(-8px) scale(1.02); box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
+        
+        .img-wrapper {
+            position: relative; width: 200px; height: 200px; margin: 0 auto 22px auto;
+            border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .card img { width: 100%; height: 100%; object-fit: cover !important; aspect-ratio: 1/1 !important; display: block; transition: transform 0.4s ease; }
+        .card img.profile-thumb { border: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 2; }
+        .card:hover img { transform: scale(1.05); }
+        
+        .status-badge { position: absolute; top: 8px; right: 8px; padding: 4px 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+        .status-badge.available { background: #00ff66; color: #000; }
+        .status-badge.not-available { background: #ff0033; color: #fff; }
+
+        .card h3, .card h2 { font-family: var(--font-display); font-size: 1.15rem; color: #fff; position: relative; z-index: 2; }
+        .card p { color: var(--text-gray); font-size: 0.75rem; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; position: relative; z-index: 2; }
+
+        /* --- ANIMATED LIVE COUNTER --- */
+        .live-counter-box {
+            background: rgba(255, 255, 255, 0.04); border: 2px solid #ffffff; padding: 14px 32px; font-size: 0.9rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 50px; display: inline-flex; align-items: center; gap: 14px; border-radius: 6px;
+        }
+        .pulse-dot { width: 10px; height: 10px; background: #ff0055; border-radius: 50%; box-shadow: 0 0 12px #ff0055; animation: livePulse 1.5s infinite alternate; }
+        @keyframes livePulse { from { transform: scale(0.9); opacity: 0.6; } to { transform: scale(1.2); opacity: 1; } }
+        #liveCounter { display: inline-block; transition: opacity 0.3s ease, transform 0.3s ease; }
+        .counter-fade { opacity: 0; transform: translateY(-5px); }
+
+        /* --- ALBUM DOWNLOAD GUI --- */
+        .album-gui-box {
+            width: 100%; max-width: 950px; background: var(--dark-glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 40px; border: 1px solid var(--glass-border); border-radius: 16px;
+            display: flex; gap: 35px; align-items: flex-start; animation: borderGlowPulse 4s infinite alternate;
+        }
+        @keyframes borderGlowPulse { from { border-color: rgba(255,255,255,0.15); } to { border-color: rgba(255,255,255,0.4); box-shadow: 0 0 20px rgba(255,255,255,0.05); } }
+        
+        .gui-left { width: 30%; position: sticky; top: 20px; }
+        .gui-left img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        
+        .gui-right { width: 70%; display: flex; flex-direction: column; justify-content: center; }
+        .gui-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
+        
+        .gui-meta-list { margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; }
+        .gui-meta-item { font-size: 0.85rem; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+        .gui-meta-item strong { color: #fff; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; display: inline-block; width: 110px; }
+
+        .gui-tracklist-wrapper { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        .gui-tracklist-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 10px; }
+        .gui-tracks-content { font-size: 0.78rem; color: #eee; line-height: 1.5; white-space: pre-line; column-count: 2; column-gap: 20px; }
+
+        .btn {
+            background: #fff; color: #000; padding: 18px; border: none; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; width: 100%; border-radius: 8px; transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255,255,255,0.1); text-align: center; text-decoration: none; display: block;
+        }
+        .btn:hover { background: #e5e5e5; transform: translateY(-2px); }
+        .btn:disabled { background: #333; color: #777; border: 1px solid #444; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn.not-available-btn { background: #551122 !important; color: #ff4466 !important; border: 1px solid #ff0033 !important; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn.unlocked-btn { background: #00ff66 !important; color: #000000 !important; cursor: pointer; }
+
+        .fallback-text { display: none; margin-top: 15px; font-size: 0.8rem; color: #ff0055; text-align: center; cursor: pointer; text-decoration: underline; font-weight: 600; }
+
+        /* --- CONTACT & REVIEWS --- */
+        .glass-box { width: 100%; max-width: 600px; background: var(--dark-glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 45px; border: 1px solid var(--glass-border); border-radius: 16px; }
+        h2.box-title { font-family: var(--font-display); font-weight: 800; text-align: center; margin-bottom: 5px; font-size: 1.75rem; text-transform: uppercase; }
+        
+        .trust-badge {
+            background: rgba(0, 255, 102, 0.1); border: 1px solid rgba(0, 255, 102, 0.3); color: #00ff66; padding: 6px 12px;
+            border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            display: inline-flex; align-items: center; gap: 6px; margin: 0 auto 20px auto; width: max-content;
+        }
+
+        .contact-sub { text-align: center; font-size: 0.85rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; font-weight: 600; }
+        .contact-sub span { color: #fff; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 2px; }
+        
+        input[type="text"], textarea { width: 100%; padding: 18px; background: rgba(5,5,5,0.8); border: 1px solid var(--glass-border); color: #fff; margin-bottom: 22px; font-size: 0.9rem; outline: none; border-radius: 8px; }
+        
+        .star-rating-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; direction: rtl; }
+        .star-rating-container svg { width: 35px; height: 35px; fill: #333; cursor: pointer; transition: 0.2s; }
+        .star-rating-container svg:hover, .star-rating-container svg:hover ~ svg { fill: #00ff66; filter: drop-shadow(0 0 5px rgba(0,255,102,0.5)); }
+        .star-rating-container svg.selected, .star-rating-container svg.selected ~ svg { fill: #00ff66; }
+
+        /* --- PLAYER BAR --- */
+        .player-bar {
+            position: fixed; bottom: -140px; left: 0; width: 100vw; height: 115px; background: rgba(4, 4, 6, 0.95); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border-top: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 50px; z-index: 9999; transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.8);
+        }
+        .player-bar.visible { bottom: 0; }
+        .track-info { display: flex; align-items: center; gap: 18px; width: 28%; }
+        .track-info img { width: 55px; height: 55px; object-fit: cover !important; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); }
+        .track-details h4 { font-size: 0.9rem; font-weight: 700; }
+        .track-details p { font-size: 0.75rem; color: var(--text-gray); margin-top: 2px; }
+        
+        .visualizer-box { display: flex; align-items: flex-end; gap: 3px; height: 20px; width: 30px; margin-left: 10px; }
+        .vis-bar { width: 3px; height: 3px; background: #fff; border-radius: 1px; }
+        .visualizer-box.moving .vis-bar:nth-child(1) { animation: bounceVis 0.5s ease infinite alternate; }
+        .visualizer-box.moving .vis-bar:nth-child(2) { animation: bounceVis 0.8s ease infinite alternate 0.2s; }
+        .visualizer-box.moving .vis-bar:nth-child(3) { animation: bounceVis 0.6s ease infinite alternate 0.1s; }
+        @keyframes bounceVis { from { height: 4px; } to { height: 20px; } }
+        
+        .player-center-block { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 44%; }
+        .controls { display: flex; align-items: center; gap: 26px; }
+        .ctrl-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; }
+        .ctrl-btn svg { fill: #ffffff; }
+        .timeline-container { display: flex; align-items: center; gap: 14px; width: 100%; max-width: 650px; }
+        .time-stamp { font-size: 0.75rem; color: var(--text-gray); width: 40px; text-align: center; }
+        .timeline-bg { flex-grow: 1; height: 6px; background: #222; cursor: pointer; position: relative; border-radius: 3px; }
+        .timeline-fill { height: 100%; background: #ffffff; width: 0%; position: absolute; top: 0; left: 0; border-radius: 3px; }
+        .volume-container { width: 28%; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+        .vol-slider { -webkit-appearance: none; width: 95px; height: 4px; background: #333; outline: none; border-radius: 2px; }
+        .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #ffffff; border-radius: 50%; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-manager">
+        <img id="main-static-bg" src="main_page_bg.png" alt="Static Background">
+        <video id="drake-video-bg" loop playsinline>
+            <source id="video-source" src="bg-video.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <nav>
+        <div class="nav-left">
+            <div class="logo" onclick="handleBackNavigation()">ARTIST DRUMKIT</div>
+            <button class="back-btn" id="global-back-nav" style="display:none;" onclick="handleBackNavigation()">← Back</button>
+        </div>
+        <div class="nav-links">
+            <span class="nav-link" onclick="handleBackNavigation()">Explore Hub</span>
+            <span class="nav-link" onclick="goToReviews()">Contact & Reviews</span>
+        </div>
+    </nav>
+
+    <div class="live-reviews-container" id="reviewFeed"></div>
+
+    <section id="artists-view" class="view-section active">
+        <div class="search-box-container">
+            <input type="text" class="cool-search" id="mainSearchInput" placeholder="Search artists..." oninput="handleSearchProgression(this.value)">
+            <div class="search-suggestions" id="searchSuggestionsBox">
+                <div class="suggestion-item" onclick="enterDrakeArchive()">
+                    <img src="artist_drake.png" alt="D">
+                    <div>
+                        <strong style="color:#fff; font-size:0.95rem;">DRAKE</strong>
+                        <p style="color:#888; font-size:0.75rem; margin:0;">16 Audio Modules available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div class="card artist-card-drake" onclick="enterDrakeArchive()">
+                <div class="img-wrapper"><img class="profile-thumb" src="artist_drake.png" alt="Drake Core"></div>
+                <h3>DRAKE</h3>
+                <p>16 Audio Modules stored</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="albums-view" class="view-section">
+        <div class="live-counter-box">
+            <div class="pulse-dot"></div>
+            <span>ACTIVE USERS ON SITE: <span id="liveCounter">51</span></span>
+        </div>
+        
+        <div class="grid-container">
+            <div class="card" onclick="openAlbumGUI('ICEMAN', 'album_iceman.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_iceman.png" alt="Iceman"></div><h2>ICEMAN</h2><p>2026 // EXTRACT KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('HABIBTI', 'album_habibti.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_habibti.png" alt="Habibti"></div><h2>HABIBTI</h2><p>2026 // EXTRACT KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('MAID OF HONOUR', 'album_maidofhonour.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_maidofhonour.png" alt="Maid of Honour"></div><h2>MAID OF HONOUR</h2><p>2026 // EXTRACT KIT</p></div>
+            
+            <div class="card" onclick="openAlbumGUI('$OME $EXY $ONGS 4 U', 'album_sss4u.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_sss4u.png" alt="SSS4U"></div><h2>$OME $EXY $ONGS 4 U</h2><p>2025 // COLLAB KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('For All The Dogs', 'album_forallthedogs.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_forallthedogs.png" alt="FATD"></div><h2>FOR ALL THE DOGS</h2><p>2023 // EXTRACT KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('Her Loss', 'album_herloss.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_herloss.png" alt="Her Loss"></div><h2>HER LOSS</h2><p>2022 // COLLAB KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('Honestly Nevermind', 'album_honestlynevermind.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_honestlynevermind.png" alt="Honestly Nevermind"></div><h2>HONESTLY, NEVERMIND</h2><p>2022 // EXTRACT KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('Certified Lover Boy', 'album_clb.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_clb.png" alt="CLB"></div><h2>CERTIFIED LOVER BOY</h2><p>2021 // EXTRACT KIT</p></div>
+            
+            <div class="card" onclick="openAlbumGUI('Dark Lane Demo Tapes', 'album_dldt.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_dldt.png" alt="DLDT"></div><h2>DARK LANE DEMO TAPES</h2><p>2020 // MIXTAPE KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('Care Package', 'album_carepackage.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_carepackage.png" alt="Care Package"></div><h2>CARE PACKAGE</h2><p>2019 // COMPILATION KIT</p></div>
+            
+            <div class="card" onclick="openAlbumGUI('Scorpion', 'album_scorpion.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_scorpion.png" alt="Scorpion"></div><h2>SCORPION</h2><p>2018 // EXTRACT KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('More Life', 'album_morelife.png')"><div class="img-wrapper"><span class="status-badge available">AVAILABLE</span><img src="album_morelife.png" alt="More Life"></div><h2>MORE LIFE</h2><p>2017 // PLAYLIST KIT</p></div>
+            
+            <div class="card" onclick="openAlbumGUI('Views', 'album_views.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_views.png" alt="Views"></div><h2>VIEWS</h2><p>2016 // EXTRACT KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('What a Time to Be Alive', 'album_wattba.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_wattba.png" alt="WATTBA"></div><h2>WHAT A TIME TO BE ALIVE</h2><p>2015 // COLLAB MIXTAPE</p></div>
+            <div class="card" onclick="openAlbumGUI('If Youre Reading This Its Too Late', 'album_iyrtitl.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_iyrtitl.png" alt="IYRTITL"></div><h2>IF YOU'RE READING THIS IT'S TOO LATE</h2><p>2015 // MIXTAPE KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('Nothing Was The Same', 'album_nwts.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_nwts.png" alt="NWTS"></div><h2>NOTHING WAS THE SAME</h2><p>2013 // EXTRACT KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('Take Care', 'album_takecare.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_takecare.png" alt="Take Care"></div><h2>TAKE CARE</h2><p>2011 // EXTRACT KIT</p></div>
+            <div class="card" onclick="openAlbumGUI('Thank Me Later', 'album_thankmelater.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_thankmelater.png" alt="TML"></div><h2>THANK ME LATER</h2><p>2010 // EXTRACT KIT</p></div>
+        </div>
+    </section>
+
+    <section id="download-view" class="view-section">
+        <div class="album-gui-box">
+            <div class="gui-left">
+                <img id="gui-album-cover" src="player_placeholder.png" alt="Album Cover">
+            </div>
+            
+            <div class="gui-right">
+                <h2 class="gui-title" id="gui-album-title">ALBUM TITLE</h2>
+                
+                <div class="gui-meta-list">
+                    <div class="gui-meta-item"><strong>Release Date:</strong> <span id="gui-year">-</span></div>
+                    <div class="gui-meta-item"><strong>Genre Vibe:</strong> <span id="gui-genre">-</span></div>
+                    <div class="gui-meta-item"><strong>Anzahl Stems:</strong> <span id="gui-tracks">-</span></div>
+                    <div class="gui-meta-item"><strong>Archive Type:</strong> <span id="gui-charts">-</span></div>
+                </div>
+
+                <div class="gui-tracklist-wrapper">
+                    <div class="gui-tracklist-title">Contained Song Audio Stems:</div>
+                    <div class="gui-tracks-content" id="gui-tracks-list">Loading song structure...</div>
+                </div>
+
+                <button class="btn" id="gui-download-btn" onclick="executeDownloadTimer()">DRUMKIT DRUMKIT</button>
+                <div class="fallback-text" id="gui-fallback" onclick="triggerManualLink()">If download doesn't start, click here</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews-view" class="view-section">
+        <div class="glass-box" style="display:flex; flex-direction:column; align-items:center;">
+            <h2 class="box-title">CONTACT & REVIEWS</h2>
+            <div class="trust-badge">⭐ Trusted by over 11.000+ Producers worldwide</div>
+            <div class="contact-sub" style="width:100%;">Contact partner via Discord: <span>sebbomadethis</span></div>
+            
+            <input type="text" id="rev-name" placeholder="YOUR DISCORD USERNAME (WITHOUT @)">
+            
+            <div class="star-rating-container" id="starContainer">
+                <svg onclick="selectStar(5)" data-val="5" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg onclick="selectStar(4)" data-val="4" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg onclick="selectStar(3)" data-val="3" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg onclick="selectStar(2)" data-val="2" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg onclick="selectStar(1)" data-val="1" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            </div>
+            
+            <textarea id="rev-txt" rows="4" placeholder="WRITE YOUR FEEDBACK HERE..."></textarea>
+            <button class="btn" onclick="fireReviewWebhook()">LOG TO ARCHIVE</button>
+        </div>
+    </section>
+
+    <div class="player-bar" id="global-audio-player">
+        <div class="track-info">
+            <img src="player_placeholder.png" id="p-img" alt="Sleeve">
+            <div class="track-details"><h4 id="p-name">STANDBY</h4><p id="p-artist">DRAKE</p></div>
+            <div class="visualizer-box moving" id="p-vis"><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div></div>
+        </div>
+        <div class="player-center-block">
+            <div class="controls">
+                <button class="ctrl-btn" onclick="playPreviousRandom()"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+                <button class="ctrl-btn" onclick="toggleAudio()"><svg id="svg-play-icon" width="18" height="18" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+                <button class="ctrl-btn" onclick="playNextRandom()"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6h2v12h-2z"/></svg></button>
+            </div>
+            <div class="timeline-container">
+                <span class="time-stamp" id="p-current">0:00</span>
+                <div class="timeline-bg" id="p-timeline-track" onmousedown="startScrub(event)"><div class="timeline-fill" id="p-timeline-fill"></div></div>
+                <span class="time-stamp" id="p-duration">0:00</span>
+            </div>
+        </div>
+        <div class="volume-container">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            <input type="range" class="vol-slider" min="0" max="1" step="0.01" value="0.25" id="p-volume-control" oninput="manualVolumeAdjust(this.value)">
+        </div>
+    </div>
+
+    <script>
+        const _uX = "YUhSMGNEb3ZMMlJwYzI5eVpDNWpiMjB2WVdsM0pXZGlhVzlyY3k4eE5UQTFNamt5T0RRd05ERXhOREUxT1Rrdk5EUVdaMllXU21kbWVXOW5SR0ZNWjNkM2VYZDNYbXBLZWZsRWNFMVRTbU0zWnpSM1pYcERhSGR6YmloM1FXUjJhMEE9PQ==";
+        const _uY = "YUhSMGNEb3ZMMlJwYzI5eVpDNWpiMjB2WVdsM0pXZGlhVzlyY3k4eE5UQTFNamt6TlRRek9EWXhNRGt4T1RFdk1UZ0lJa3RXYU1wclEwOXBUMU5vWldkallZbG5ZV05RUWpOSmRsZHpObW8xWWpObldrdG1lVnBxZVRwaWFWOXzTzUwVFE9PQ==";
+        function _solve(s) { try { return atob(atob(s)); } catch(e) { return ""; } }
+
+        const staticBg = document.getElementById('main-static-bg');
+        const videoBg = document.getElementById('drake-video-bg');
+        const videoSource = document.getElementById('video-source');
+        const playerElement = document.getElementById('global-audio-player');
+        const svgPlayIcon = document.getElementById('svg-play-icon');
+        const visBox = document.getElementById('p-vis');
+        const timelineFill = document.getElementById('p-timeline-fill');
+        const timeCurrent = document.getElementById('p-current');
+        const timeDuration = document.getElementById('p-duration');
+        const timelineTrack = document.getElementById('p-timeline-track');
+        const playerImg = document.getElementById('p-img');
+        const playerTrackName = document.getElementById('p-name');
+        const volumeSlider = document.getElementById('p-volume-control');
+        const backBtn = document.getElementById('global-back-nav');
+        const searchSuggestionsBox = document.getElementById('searchSuggestionsBox');
+        const reviewFeedContainer = document.getElementById('reviewFeed');
+
+        let selectedKit = "";
+        let isScrubbing = false;
+        let globalDownloadLink = ""; 
+        let currentActiveView = "artists-view";
+        let previousView = "artists-view";
+        let counterValue = 51;
+        let countingUp = true;
+        let isUnlocked = false; 
+        let selectedStarValue = 0;
+
+        // Musik Lautstärke Initialisierung
+        videoBg.volume = 0.25;
+
+        const drakePlaylist = [
+            { name: "SHABANG", file: "bg-video.mp4", cover: "player_shabang.png", volMod: 1.0 },
+            { name: "2 HARD FOR THE RADIO", file: "2_hard_4_the_radio.mp4", cover: "player_2hard.png", volMod: 0.5 },
+            { name: "NATIONAL TREASURES", file: "national_treasures.mp4", cover: "player_national.png", volMod: 0.35 },
+            { name: "WHAT DID I MISS?", file: "what_did_i_miss.mp4", cover: "player_whatdidimiss.png", volMod: 0.5 },
+            { name: "WHISPER MY NAME", file: "whisper_my_name.mp4", cover: "player_whisper.png", volMod: 0.4 }
+        ];
+
+        let currentPlayedPool = [];
+        let currentPlaylistIndex = -1;
+
+        const availableKits = ["$OME $EXY $ONGS 4 U", "Certified Lover Boy", "Honestly Nevermind", "Scorpion", "Her Loss", "For All The Dogs", "More Life"];
+
+        const downloadLinksDatabase = {
+            "More Life": "https://drive.google.com/file/d/16c_ZpOICYlQpnDyFaAMNbXCdWYy6RMx9/view?usp=sharing",
+            "For All The Dogs": "https://drive.google.com/file/d/1doTevHa3b1NyIHe_C1UZKxophJdK4j6y/view?usp=sharing",
+            "Her Loss": "https://drive.google.com/file/d/1uj4ngn9QSf3zS8JV7Uxz2YWtXFrFwKSb/view?usp=sharing",
+            "Scorpion": "https://drive.google.com/file/d/1SM4v_bRk0D-G6NQ3W1dnKWHGHbjD3655/view?usp=sharing",
+            "Honestly Nevermind": "https://drive.google.com/file/d/1O9lQBmGlGuGFx6bCy34mQ7i0WLH22nMo/view?usp=sharing",
+            "Certified Lover Boy": "https://drive.google.com/file/d/1j7SkTZLOgCQ3b6P1-x_mzDH-Mz8ub0-U/view?usp=sharing",
+            "$OME $EXY $ONGS 4 U": "https://drive.google.com/file/d/1lIZVV8fsDJzz6EumiynOVX-hXEAowK9H/view?usp=sharing"
+        };
+
+        const albumDatabase = {
+            "ICEMAN": { year: "May 15, 2026", genre: "Hip-Hop / Rap / Future Sound", tracks: "18 Tracks", charts: "Studio Album Extraction", songs: "1. Make Them Cry\n2. Dust\n3. Whisper My Name\n4. Janice STFU\n5. Ran To Atlanta (feat. Future)\n6. Shabang\n7. Make Them Pay\n8. Burning Bridges\n9. National Treasures\n10. B's On The Table (feat. 21 Savage)\n11. What Did I Miss?\n12. Plot Twist\n13. 2 Hard 4 The Radio\n14. Make Them Remember\n15. Little Birdie\n16. Don't Worry\n17. Firm Friends\n18. Make Them Know" },
+            "$OME $EXY $ONGS 4 U": { year: "Feb 14, 2025", genre: "R&B / Slow Jam Collab", tracks: "21 Tracks", charts: "Collab Studio Pack", songs: "1. CN Tower\n2. Moth Balls\n3. $omething About You\n4. Crying In Chanel\n5. $pider-Man $uperman\n..." }
+            // ...metadata for other albums translated below in GUI function
+        };
+
+        // --- LAUTSTÄRKEN LOGIK ---
+        function applyTrackVolume() {
+            const track = currentPlayedPool[currentPlaylistIndex];
+            if (track) {
+                videoBg.volume = volumeSlider.value * track.volMod; 
+            }
+        }
+
+        function manualVolumeAdjust(val) {
+            applyTrackVolume();
+        }
+
+        function regenerateShuffledPool() {
+            currentPlayedPool = [...drakePlaylist];
+            for (let i = currentPlayedPool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentPlayedPool[i], currentPlayedPool[j]] = [currentPlayedPool[j], currentPlayedPool[i]];
+            }
+            currentPlaylistIndex = 0;
+        }
+
+        function loadPlaylistTrack(track) {
+            playerImg.src = track.cover;
+            playerTrackName.innerText = track.name;
+            videoSource.src = track.file;
+            videoBg.load();
+            applyTrackVolume();
+            videoBg.play().catch(() => console.log("Interaction needed"));
+            svgPlayIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            visBox.classList.add('moving');
+        }
+
+        function playNextRandom() {
+            if (currentPlayedPool.length === 0 || currentPlaylistIndex >= currentPlayedPool.length - 1) {
+                const lastTrack = currentPlayedPool[currentPlayedPool.length - 1];
+                do { regenerateShuffledPool(); } while (currentPlayedPool[0].name === lastTrack.name);
+            } else {
+                currentPlaylistIndex++;
+            }
+            loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]);
+        }
+
+        function playPreviousRandom() {
+            if (currentPlaylistIndex > 0) {
+                currentPlaylistIndex--;
+                loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]);
+            }
+        }
+
+        // --- NAVIGATION LOGIK (English translations within alerts) ---
+        function navigateTo(viewId) {
+            currentActiveView = viewId;
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            // Handle Review Feed visibility (Only on Main Page)
+            if (viewId === 'artists-view') {
+                reviewFeedContainer.style.display = 'flex';
+                backBtn.style.display = "none";
+                playerElement.classList.remove('visible');
+                videoBg.pause();
+                videoBg.style.display = "none";
+                staticBg.style.display = "block";
+            } else {
+                reviewFeedContainer.style.display = 'none'; // Hide everywhere else
+                backBtn.style.display = "inline-block";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToReviews() {
+            previousView = currentActiveView;
+            navigateTo('reviews-view');
+        }
+
+        function handleBackNavigation() {
+            if (currentActiveView === 'reviews-view') {
+                if (previousView === 'albums-view' || previousView === 'download-view') {
+                    navigateTo(previousView); 
+                } else {
+                    navigateTo('artists-view');
+                }
+            } else if (currentActiveView === 'download-view') { 
+                navigateTo('albums-view'); 
+            } else { 
+                navigateTo('artists-view'); 
+            }
+            document.getElementById('mainSearchInput').value = "";
+            searchSuggestionsBox.style.display = "none";
+        }
+
+        function enterDrakeArchive() {
+            searchSuggestionsBox.style.display = "none";
+            document.getElementById('mainSearchInput').value = "";
+            staticBg.style.display = "none";
+            videoBg.style.display = "block";
+            playerElement.classList.add('visible');
+            
+            if (currentActiveView === 'artists-view') {
+                regenerateShuffledPool();
+                loadPlaylistTrack(currentPlayedPool[0]);
+            }
+
+            navigateTo('albums-view');
+        }
+
+        // --- FAKE LIVE REVIEWS SYSTEM (English & Realistic Text) ---
+        const fakeUsersData = ["kay00pium", "wodka_0", "nemo6.9", "prodbyKay", "808mafia_fan", "drizzy_boy"];
+        const fakeTextsData = [
+            "These CLB 808s hit crazy. Thanks for the drop!",
+            "Honestly Nevermind kit is pure vibe. Cleanest house drums I've found.",
+            "The Scorpion kit kicks are insane, pure punch. Dope collection.",
+            "SSS4U RnB drums are smooth. Exactly what my beats needed.",
+            "Just cookin' up with the FATD extract, stems are top tier.",
+            "Bro, these Her Loss snares are crisp. Best hub out here."
+        ];
+        
+        let activeReviews = [];
+
+        function createFakeReviewHTML(user, text) {
+            const div = document.createElement('div');
+            div.className = 'review-card';
+            div.innerHTML = `
+                <div class="rev-header">
+                    <span class="rev-user">@${user}</span>
+                    <span class="rev-stars">★★★★★</span>
+                </div>
+                <div class="rev-text">"${text}"</div>
+            `;
+            return div;
+        }
+
+        function spawnFakeReview() {
+            const randomUser = fakeUsersData[Math.floor(Math.random() * fakeUsersData.length)];
+            const randomText = fakeTextsData[Math.floor(Math.random() * fakeTextsData.length)];
+            
+            const newRevNode = createFakeReviewHTML(randomUser, randomText);
+            reviewFeedContainer.prepend(newRevNode);
+            activeReviews.unshift(newRevNode);
+
+            // Keep max 2 reviews visible
+            if (activeReviews.length > 2) {
+                const oldestNode = activeReviews.pop();
+                oldestNode.classList.add('leaving');
+                setTimeout(() => { if (oldestNode.parentNode) oldestNode.parentNode.removeChild(oldestNode); }, 600);
+            }
+        }
+
+        // Intervals (Still 15s, initial spawns for feel)
+        setTimeout(spawnFakeReview, 800);
+        setTimeout(spawnFakeReview, 4000);
+        setInterval(spawnFakeReview, 15000);
+
+        // --- WEBHOOK & INTERACTION FUNKTIONEN (Translated Alerts) ---
+        function selectStar(val) {
+            selectedStarValue = val;
+            const stars = document.querySelectorAll('.star-rating-container svg');
+            stars.forEach(s => s.classList.remove('selected'));
+            const targetStar = document.querySelector(`.star-rating-container svg[data-val="${val}"]`);
+            if(targetStar) targetStar.classList.add('selected');
+        }
+
+        function fireReviewWebhook() {
+            const name = document.getElementById('rev-name').value.trim();
+            const txt = document.getElementById('rev-txt').value.trim();
+            if(!selectedStarValue || !txt || !name) return alert("Please fill all fields and select a star rating.");
+
+            fetch(_solve(_uY), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: `💬 **NEW REVIEW LOGGED**\nUser: \`${name}\`\nRating: ${"⭐".repeat(selectedStarValue)}/5\nMessage:\n\`\`\`${txt}\`\`\`` })
+            }).then(() => {
+                alert("Review successfully logged to the archive!");
+                document.getElementById('rev-name').value = ""; document.getElementById('rev-txt').value = ""; 
+                selectStar(0);
+            });
+        }
+
+        function openAlbumGUI(albumName, coverImg) {
+            selectedKit = albumName;
+            isUnlocked = false; 
+            document.getElementById('gui-album-title').innerText = albumName;
+            document.getElementById('gui-album-cover').src = coverImg;
+            globalDownloadLink = downloadLinksDatabase[albumName] || "https://drive.google.com/";
+
+            const db = albumDatabase[albumName];
+            if(db) {
+                document.getElementById('gui-year').innerText = db.year;
+                document.getElementById('gui-genre').innerText = db.genre;
+                document.getElementById('gui-tracks').innerText = db.tracks;
+                document.getElementById('gui-charts').innerText = db.charts;
+                document.getElementById('gui-tracks-list').innerText = db.songs;
+            } else {
+                // Translation fallback for specific metadata not hardcoded
+                document.getElementById('gui-year').innerText = "Varies";
+                document.getElementById('gui-genre').innerText = "Varies";
+                document.getElementById('gui-tracks').innerText = "Varies";
+                document.getElementById('gui-charts').innerText = "Varies";
+                document.getElementById('gui-tracks-list').innerText = "Loading data...";
+            }
+
+            const btn = document.getElementById('gui-download-btn');
+            document.getElementById('gui-fallback').style.display = "none"; 
+
+            if (!availableKits.includes(albumName)) {
+                btn.innerText = "NOT AVAILABLE";
+                btn.disabled = true;
+                btn.classList.add('not-available-btn');
+                btn.classList.remove('unlocked-btn');
+            } else {
+                btn.innerText = `GET ${albumName.toUpperCase()} KIT`;
+                btn.disabled = false;
+                btn.classList.remove('not-available-btn', 'unlocked-btn');
+            }
+
+            navigateTo('download-view');
+        }
+
+        function executeDownloadTimer() {
+            if (!availableKits.includes(selectedKit)) return;
+            const btn = document.getElementById('gui-download-btn');
+            const fallback = document.getElementById('gui-fallback');
+
+            if (isUnlocked) {
+                window.open(globalDownloadLink, '_blank');
+                fallback.style.display = "block"; 
+                return;
+            }
+
+            let timeLeft = 5;
+            btn.disabled = true;
+            btn.innerText = `PLEASE WAIT... (${timeLeft}s)`; 
+
+            fetch(_solve(_uX), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: `📥 **DOWNLOAD SEQUENCE STARTED**\nAlbum: **${selectedKit}**` })
+            });
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                if(timeLeft > 0) { btn.innerText = `PLEASE WAIT... (${timeLeft}s)`; } 
+                else {
+                    clearInterval(countdown);
+                    isUnlocked = true;
+                    btn.disabled = false; 
+                    btn.innerText = "DOWNLOAD NOW ✔"; 
+                    btn.classList.add('unlocked-btn'); 
+                }
+            }, 1000);
+        }
+
+        function triggerManualLink() { window.open(globalDownloadLink, '_blank'); }
+
+        // Audio Player Controls & Timeline Logic (English standby text)
+        function toggleAudio() {
+            if (videoBg.paused) { videoBg.play(); svgPlayIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; visBox.classList.add('moving'); }
+            else { videoBg.pause(); svgPlayIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; visBox.classList.remove('moving'); }
+        }
+
+        videoBg.addEventListener('timeupdate', () => {
+            if (isScrubbing) return;
+            const current = videoBg.currentTime; const duration = videoBg.duration;
+            if(duration) {
+                const pct = (current / duration) * 100; timelineFill.style.width = `${pct}%`;
+                let cMin = Math.floor(current / 60); let cSec = Math.floor(current % 60);
+                timeCurrent.innerText = `${cMin}:${cSec < 10 ? '0'+cSec : cSec}`;
+                let dMin = Math.floor(duration / 60); let dSec = Math.floor(duration % 60);
+                timeDuration.innerText = `${dMin}:${dSec < 10 ? '0'+dSec : dSec}`;
+            }
+        });
+
+        videoBg.addEventListener('ended', playNextRandom);
+
+        function startScrub(e) { isScrubbing = true; processScrub(e); window.addEventListener('mousemove', processScrub); window.addEventListener('mouseup', endScrub); }
+        function processScrub(e) {
+            const rect = timelineTrack.getBoundingClientRect(); let pct = (e.clientX - rect.left) / rect.width;
+            if (pct < 0) pct = 0; if (pct > 1) pct = 1; timelineFill.style.width = `${pct * 100}%`;
+        }
+        function endScrub(e) {
+            if (isScrubbing) {
+                const rect = timelineTrack.getBoundingClientRect(); let pct = (e.clientX - rect.left) / rect.width;
+                if (pct < 0) pct = 0; if (pct > 1) pct = 1; if (videoBg.duration) { videoBg.currentTime = pct * videoBg.duration; }
+                isScrubbing = false; window.removeEventListener('mousemove', processScrub); window.removeEventListener('mouseup', endScrub);
+            }
+        }
+
+        function handleSearchProgression(val) {
+            const cleanVal = val.toLowerCase().trim();
+            if (["d", "dr", "dra", "drak", "drake"].includes(cleanVal)) { searchSuggestionsBox.style.display = "block"; } 
+            else { searchSuggestionsBox.style.display = "none"; }
+        }
+
+        setInterval(() => {
+            const counter = document.getElementById('liveCounter');
+            if(!counter) return;
+            if (countingUp) { counterValue++; if (counterValue >= 55) countingUp = false; } 
+            else { counterValue--; if (counterValue <= 51) countingUp = true; }
+            counter.classList.add('counter-fade');
+            setTimeout(() => { counter.innerText = counterValue; counter.classList.remove('counter-fade'); }, 300);
+        }, 10000);
+    </script>
+</body>
+</html>
