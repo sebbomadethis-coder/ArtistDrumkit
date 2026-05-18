@@ -98,6 +98,38 @@
             text-transform: uppercase; letter-spacing: 1px; margin-bottom: 28px; font-weight: 600;
         }
 
+        .wasteland-overlay {
+            position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.9); z-index: 9999; backdrop-filter: blur(12px);
+            padding: 20px;
+        }
+        .wasteland-overlay.active { display: flex; }
+        .wasteland-popup {
+            width: 100%; max-width: 460px; background: rgba(12,12,15,0.98); border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 20px; padding: 24px; position: relative; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+        }
+        .wasteland-popup img {
+            width: 100%; height: 240px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.12); margin-bottom: 18px;
+            object-fit: cover;
+        }
+        .wasteland-popup .redeem-close {
+            background: rgba(255,255,255,0.08); color: #fff; width: 44px; height: 44px; border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.15); font-size: 1.4rem; top: 16px; right: 16px;
+            display: flex; align-items: center; justify-content: center; padding: 0;
+        }
+        .wasteland-popup .redeem-close:hover { background: rgba(255,255,255,0.18); color: #fff; }
+        .wasteland-warning {
+            color: #ff5f6d; font-size: 0.95rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; margin-bottom: 16px; text-shadow: 0 0 8px rgba(255,95,109,0.45);
+        }
+        .wasteland-popup-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .wasteland-back-btn {
+            background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 14px 20px;
+            border-radius: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .wasteland-back-btn:hover { background: rgba(255,255,255,0.07); }
+
         /* Mars video inside popup — hidden by default */
         .redeem-video-wrapper {
             width: 100%; aspect-ratio: 16/9; border-radius: 10px;
@@ -137,7 +169,7 @@
         .mars-vol-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .mars-vol-wrap svg { fill: #888; flex-shrink: 0; }
         .mars-vol-slider {
-            -webkit-appearance: none; width: 75px; height: 4px;
+            appearance: none; -webkit-appearance: none; width: 75px; height: 4px;
             background: #333; outline: none; border-radius: 2px;
         }
         .mars-vol-slider::-webkit-slider-thumb {
@@ -205,6 +237,7 @@
             min-height: 100vh; padding: 140px 40px 160px 40px;
             display: none; flex-direction: column; align-items: center; width: 100%; position: relative;
         }
+        #albums-view, #mars-albums-view { padding-top: 110px; }
         .view-section.active { display: flex; animation: viewSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes viewSlideUp {
             from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
@@ -212,6 +245,14 @@
         }
 
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px; width: 100%; max-width: 1200px; justify-content: center; position: relative; z-index: 1; }
+        #artists-view .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; max-width: 840px; margin: 0 auto; }
+        #artists-view .card { width: 100%; min-height: 220px; padding: 24px; text-align: left; align-items: center; display: grid !important; grid-template-columns: 170px 1fr; gap: 20px; }
+        #artists-view .card h3, #artists-view .card p { text-align: left; margin: 0; }
+        #artists-view .img-wrapper { width: 170px; height: 170px; margin: 0; }
+
+        #mars-albums-view .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 320px)); justify-content: center; gap: 28px; max-width: 340px; margin: 0 auto; }
+        #mars-albums-view .card { width: 100%; max-width: 320px; min-height: 320px; padding: 26px; }
+        #mars-albums-view .img-wrapper { width: 200px; height: 200px; margin-bottom: 18px; }
         
         .card {
             background: var(--dark-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -231,6 +272,9 @@
             position: relative; width: 200px; height: 200px; margin: 0 auto 22px auto;
             border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
         }
+        #artists-view .card .img-wrapper {
+            width: 180px; height: 180px;
+        }
         .card img { width: 100%; height: 100%; object-fit: cover !important; aspect-ratio: 1/1 !important; display: block; transition: transform 0.4s ease; }
         .card img.profile-thumb { border: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 2; }
         .card:hover img { transform: scale(1.05); }
@@ -243,24 +287,25 @@
         .card p { color: var(--text-gray); font-size: 0.75rem; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; position: relative; z-index: 2; }
 
         .live-counter-box {
-            background: rgba(255, 255, 255, 0.04); border: 2px solid #ffffff; padding: 14px 32px; font-size: 0.9rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 50px; display: inline-flex; align-items: center; gap: 14px; border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06); border: 2px solid rgba(255,255,255,0.35); padding: 18px 34px; font-size: 1rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px; display: inline-flex; align-items: center; gap: 14px; border-radius: 8px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.18);
         }
-        .pulse-dot { width: 10px; height: 10px; background: #ff0055; border-radius: 50%; box-shadow: 0 0 12px #ff0055; animation: livePulse 1.5s infinite alternate; }
-        @keyframes livePulse { from { transform: scale(0.9); opacity: 0.6; } to { transform: scale(1.2); opacity: 1; } }
+        .pulse-dot { width: 12px; height: 12px; background: #ff3c66; border-radius: 50%; box-shadow: 0 0 16px rgba(255,60,102,0.55); animation: livePulse 1.5s infinite alternate; }
+        @keyframes livePulse { from { transform: scale(0.85); opacity: 0.65; } to { transform: scale(1.25); opacity: 1; } }
         #liveCounter { display: inline-block; transition: opacity 0.3s ease, transform 0.3s ease; }
         .counter-fade { opacity: 0; transform: translateY(-5px); }
 
         .album-gui-box {
-            width: 100%; max-width: 950px; background: var(--dark-glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 40px; border: 1px solid var(--glass-border); border-radius: 16px;
-            display: flex; gap: 35px; align-items: flex-start; animation: borderGlowPulse 4s infinite alternate;
+            width: 100%; max-width: 760px; background: var(--dark-glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 28px; border: 1px solid var(--glass-border); border-radius: 16px;
+            display: flex; gap: 28px; align-items: flex-start; animation: borderGlowPulse 4s infinite alternate;
         }
         @keyframes borderGlowPulse { from { border-color: rgba(255,255,255,0.15); } to { border-color: rgba(255,255,255,0.4); box-shadow: 0 0 20px rgba(255,255,255,0.05); } }
         
-        .gui-left { width: 30%; position: sticky; top: 20px; }
+        .gui-left { width: 34%; max-width: 230px; position: sticky; top: 20px; }
         .gui-left img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         
-        .gui-right { width: 70%; display: flex; flex-direction: column; justify-content: center; }
+        .gui-right { width: 66%; display: flex; flex-direction: column; justify-content: center; }
         .gui-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
         
         .gui-meta-list { margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; }
@@ -275,7 +320,7 @@
         .gui-tracklist-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 10px; }
         .gui-tracks-content { 
             font-size: 0.78rem; color: #eee; line-height: 1.7; white-space: pre-line; 
-            column-count: 2; column-gap: 20px; overflow: visible; height: auto; max-height: none;
+            overflow: visible; height: auto; max-height: none;
         }
 
         .btn {
@@ -334,7 +379,7 @@
         .timeline-bg { flex-grow: 1; height: 6px; background: #222; cursor: pointer; position: relative; border-radius: 3px; }
         .timeline-fill { height: 100%; background: #ffffff; width: 0%; position: absolute; top: 0; left: 0; border-radius: 3px; }
         .volume-container { width: 28%; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
-        .vol-slider { -webkit-appearance: none; width: 95px; height: 4px; background: #333; outline: none; border-radius: 2px; }
+        .vol-slider { appearance: none; -webkit-appearance: none; width: 95px; height: 4px; background: #333; outline: none; border-radius: 2px; }
         .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #ffffff; border-radius: 50%; cursor: pointer; }
     </style>
 </head>
@@ -397,6 +442,18 @@
         </div>
     </div>
 
+    <div class="wasteland-overlay" id="wastelandOverlay" onclick="handleWastelandOverlayClick(event)">
+        <div class="wasteland-popup">
+            <button class="redeem-close" onclick="closeWastelandPopup()">✕</button>
+            <img src="wastelandTT.png" alt="Wasteland Drumkit Preview">
+            <div class="wasteland-warning">DONT STEAL</div>
+            <div class="wasteland-popup-actions">
+                <button class="wasteland-back-btn" onclick="closeWastelandPopup()">BACK</button>
+                <a class="btn" href="https://marsonthecomeup.sellfy.store/p/wasteland-drumkit/" target="_blank">OPEN SELLFY</a>
+            </div>
+        </div>
+    </div>
+
     <div class="live-reviews-container" id="reviewFeed"></div>
 
     <section id="artists-view" class="view-section active">
@@ -410,6 +467,13 @@
                         <p style="color:#888; font-size:0.75rem; margin:0;">16 Audio Modules available</p>
                     </div>
                 </div>
+                <div class="suggestion-item" onclick="enterMarsArchive()">
+                    <img src="artist_mars.png" alt="M">
+                    <div>
+                        <strong style="color:#fff; font-size:0.95rem;">MARS ON THE COME UP</strong>
+                        <p style="color:#888; font-size:0.75rem; margin:0;">1 Drumkit available</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -419,15 +483,15 @@
                 <h3>DRAKE</h3>
                 <p>16 Audio Modules stored</p>
             </div>
+            <div class="card" onclick="enterMarsArchive()">
+                <div class="img-wrapper"><img class="profile-thumb" src="artist_mars.png" alt="Mars On The Come Up"></div>
+                <h3>MARS ON THE COME UP</h3>
+                <p>1 Drumkit stored</p>
+            </div>
         </div>
     </section>
 
     <section id="albums-view" class="view-section">
-        <div class="live-counter-box">
-            <div class="pulse-dot"></div>
-            <span>ACTIVE USERS ON SITE: <span id="liveCounter">51</span></span>
-        </div>
-        
         <div class="grid-container">
             <div class="card" onclick="openAlbumGUI('ICEMAN', 'album_iceman.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_iceman.png" alt="Iceman"></div><h2>ICEMAN</h2><p>2026 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('HABIBTI', 'album_habibti.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_habibti.png" alt="Habibti"></div><h2>HABIBTI</h2><p>2026 // EXTRACT KIT</p></div>
@@ -447,6 +511,14 @@
             <div class="card" onclick="openAlbumGUI('Nothing Was The Same', 'album_nwts.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_nwts.png" alt="NWTS"></div><h2>NOTHING WAS THE SAME</h2><p>2013 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('Take Care', 'album_takecare.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_takecare.png" alt="Take Care"></div><h2>TAKE CARE</h2><p>2011 // EXTRACT KIT</p></div>
             <div class="card" onclick="openAlbumGUI('Thank Me Later', 'album_thankmelater.png')"><div class="img-wrapper"><span class="status-badge not-available">NOT AVAILABLE</span><img src="album_thankmelater.png" alt="TML"></div><h2>THANK ME LATER</h2><p>2010 // EXTRACT KIT</p></div>
+        </div>
+    </section>
+
+    <section id="mars-albums-view" class="view-section">
+        <div class="grid-container">
+            <div class="card" onclick='openAlbumGUI("Wasteland Drumkit", "album_wasteland.png")'>
+                <div class="img-wrapper">
+                    <span class="status-badge available">AVAILABLE</span><img src="album_wasteland.png" alt="Wasteland Drumkit"></div><h2>WASTELAND DRUMKIT</h2><p>2026 // PRODUCER DRUMKIT</p></div>
         </div>
     </section>
 
@@ -532,6 +604,7 @@
         const timelineTrack = document.getElementById('p-timeline-track');
         const playerImg = document.getElementById('p-img');
         const playerTrackName = document.getElementById('p-name');
+        const playerTrackArtist = document.getElementById('p-artist');
         const volumeSlider = document.getElementById('p-volume-control');
         const backBtn = document.getElementById('global-back-nav');
         const searchSuggestionsBox = document.getElementById('searchSuggestionsBox');
@@ -606,6 +679,16 @@
 
         function handleOverlayClick(e) {
             if (e.target === document.getElementById('redeemOverlay')) closeRedeemPopup();
+        }
+
+        function openWastelandPopup() {
+            document.getElementById('wastelandOverlay').classList.add('active');
+        }
+        function closeWastelandPopup() {
+            document.getElementById('wastelandOverlay').classList.remove('active');
+        }
+        function handleWastelandOverlayClick(e) {
+            if (e.target === document.getElementById('wastelandOverlay')) closeWastelandPopup();
         }
 
         // Keyboard ESC closes popup
@@ -716,10 +799,15 @@
             { name: "WHISPER MY NAME", file: "whisper_my_name.mp4", cover: "player_whisper.png", volMod: 0.4 }
         ];
 
+        const marsPlaylist = [
+            { name: "2 HARD FOR THE RADIO", artist: "MARS ON THE COME UP", file: "2_hard_4_the_radio.mp4", cover: "player_2hard.png", volMod: 0.5 }
+        ];
+
         let currentPlayedPool = [];
         let currentPlaylistIndex = -1;
+        let currentPlaylistSource = 'drake';
 
-        const availableKits = ["$OME $EXY $ONGS 4 U", "Certified Lover Boy", "Honestly Nevermind", "Scorpion", "Her Loss", "For All The Dogs", "More Life"];
+        const availableKits = ["$OME $EXY $ONGS 4 U", "Certified Lover Boy", "Honestly Nevermind", "Scorpion", "Her Loss", "For All The Dogs", "More Life", "Wasteland Drumkit"];
 
         const downloadLinksDatabase = {
             "More Life": "https://drive.google.com/file/d/16c_ZpOICYlQpnDyFaAMNbXCdWYy6RMx9/view?usp=sharing",
@@ -749,7 +837,8 @@
             "If Youre Reading This Its Too Late": { year: "Feb 13, 2015", genre: "Hip-Hop / Trap / Mixtape", tracks: "17 Tracks", charts: "Mixtape Extraction", songs: "1. Legend\n2. Energy\n3. 10 Bands\n4. Know Yourself\n5. No Tellin'\n6. madonna\n7. 6 God\n8. Star67\n9. 6PM In New York\n10. You & The 6\n11. Preach\n12. 6 Man\n13. Now & Forever\n14. 3 Peat\n15. Company (feat. Travis Scott)\n16. Used To (feat. Lil Wayne)\n17. 6 Man (Outro)" },
             "Nothing Was The Same": { year: "Sep 24, 2013", genre: "Hip-Hop / R&B", tracks: "15 Tracks (+2 Deluxe)", charts: "Studio Album Extraction", songs: "1. Tuscan Leather\n2. Furthest Thing\n3. Started From The Bottom\n4. Wu-Tang Forever\n5. Own It\n6. Worst Behavior\n7. From Time (feat. Jhené Aiko)\n8. Hold On, We're Going Home (feat. Majid Jordan)\n9. Connect\n10. The Language\n11. 305 To My City (feat. Detail)\n12. Too Much (feat. Sampha)\n13. Pound Cake / Paris Morton Music 2 (feat. JAY-Z)\n14. Come Thru\n15. All Me (feat. 2 Chainz & Big Sean)\n— DELUXE —\n16. The Motion (feat. Sampha)\n17. Connect (Alternate)" },
             "Take Care": { year: "Nov 15, 2011", genre: "Hip-Hop / R&B", tracks: "18 Tracks (+4 Deluxe)", charts: "Studio Album Extraction", songs: "1. Over My Dead Body\n2. Shot For Me\n3. Headlines\n4. Crew Love (feat. The Weeknd)\n5. Take Care (feat. Rihanna)\n6. Marvins Room\n7. Buried Alive Interlude (feat. Kendrick Lamar)\n8. Under Ground Kings\n9. We'll Be Fine (feat. Birdman)\n10. Make Me Proud (feat. Nicki Minaj)\n11. Lord Knows (feat. Rick Ross)\n12. Cameras / Good Ones Go Interlude\n13. Doing It Wrong\n14. The Real Her (feat. Lil Wayne & André 3000)\n15. Look What You've Done\n16. HYFR (feat. Lil Wayne)\n17. Practice\n18. The Ride (feat. The Weeknd)\n— DELUXE —\n19. The Motto (feat. Lil Wayne)\n20. Hate Sleeping Alone\n21. Dreams Money Can Buy\n22. Right Here" },
-            "Thank Me Later": { year: "Jun 15, 2010", genre: "Hip-Hop / R&B", tracks: "14 Tracks", charts: "Studio Album Extraction", songs: "1. Fireworks (feat. Alicia Keys)\n2. Karaoke\n3. The Resistance\n4. Over\n5. Show Me A Good Time\n6. Up All Night (feat. Nicki Minaj)\n7. Fancy (feat. T.I. & Swizz Beatz)\n8. Shut It Down (feat. The-Dream)\n9. Unforgettable (feat. Young Jeezy)\n10. Light Up (feat. JAY-Z)\n11. Miss Me (feat. Lil Wayne)\n12. Cece's Interlude\n13. Find Your Love\n14. Thank Me Now" }
+            "Thank Me Later": { year: "Jun 15, 2010", genre: "Hip-Hop / R&B", tracks: "14 Tracks", charts: "Studio Album Extraction", songs: "1. Fireworks (feat. Alicia Keys)\n2. Karaoke\n3. The Resistance\n4. Over\n5. Show Me A Good Time\n6. Up All Night (feat. Nicki Minaj)\n7. Fancy (feat. T.I. & Swizz Beatz)\n8. Shut It Down (feat. The-Dream)\n9. Unforgettable (feat. Young Jeezy)\n10. Light Up (feat. JAY-Z)\n11. Miss Me (feat. Lil Wayne)\n12. Cece's Interlude\n13. Find Your Love\n14. Thank Me Now" },
+            "Wasteland Drumkit": { year: "2026", genre: "Drake Producer / Produced on ICEMAN", tracks: "1 Drumkit", charts: "Wasteland Drumkit", songs: "Produced for Drake on ICEMAN\nDrake Producer: MarsOnTheComeUp" }
         };
 
         function applyTrackVolume() {
@@ -759,6 +848,11 @@
         function manualVolumeAdjust(val) { applyTrackVolume(); }
 
         function regenerateShuffledPool() {
+            if (currentPlaylistSource === 'mars') {
+                currentPlayedPool = [...marsPlaylist];
+                currentPlaylistIndex = 0;
+                return;
+            }
             currentPlayedPool = [...drakePlaylist];
             for (let i = currentPlayedPool.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -770,6 +864,7 @@
         function loadPlaylistTrack(track) {
             playerImg.src = track.cover;
             playerTrackName.innerText = track.name;
+            playerTrackArtist.innerText = track.artist || 'DRAKE';
             videoSource.src = track.file;
             videoBg.load();
             applyTrackVolume();
@@ -779,15 +874,32 @@
         }
 
         function playNextRandom() {
-            if (currentPlayedPool.length === 0 || currentPlaylistIndex >= currentPlayedPool.length - 1) {
-                const lastTrack = currentPlayedPool[currentPlayedPool.length - 1];
-                do { regenerateShuffledPool(); } while (currentPlayedPool[0].name === lastTrack.name);
-            } else { currentPlaylistIndex++; }
+            if (currentPlayedPool.length === 0) return;
+            if (currentPlaylistIndex >= currentPlayedPool.length - 1) {
+                if (currentPlaylistSource === 'mars') {
+                    currentPlaylistIndex = 0;
+                } else {
+                    const lastTrack = currentPlayedPool[currentPlayedPool.length - 1];
+                    do { regenerateShuffledPool(); } while (currentPlayedPool[0].name === lastTrack.name);
+                }
+            } else {
+                currentPlaylistIndex++;
+            }
             loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]);
         }
 
         function playPreviousRandom() {
-            if (currentPlaylistIndex > 0) { currentPlaylistIndex--; loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]); }
+            if (currentPlaylistSource === 'mars') {
+                if (currentPlaylistIndex > 0) {
+                    currentPlaylistIndex--;
+                    loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]);
+                }
+                return;
+            }
+            if (currentPlaylistIndex > 0) {
+                currentPlaylistIndex--;
+                loadPlaylistTrack(currentPlayedPool[currentPlaylistIndex]);
+            }
         }
 
         function navigateTo(viewId) {
@@ -812,9 +924,9 @@
 
         function handleBackNavigation() {
             if (currentActiveView === 'reviews-view') {
-                if (previousView === 'albums-view' || previousView === 'download-view') { navigateTo(previousView); }
+                if (previousView === 'albums-view' || previousView === 'download-view' || previousView === 'mars-albums-view') { navigateTo(previousView); }
                 else { navigateTo('artists-view'); }
-            } else if (currentActiveView === 'download-view') { navigateTo('albums-view'); }
+            } else if (currentActiveView === 'download-view') { navigateTo(previousView || 'albums-view'); }
             else { navigateTo('artists-view'); }
             document.getElementById('mainSearchInput').value = "";
             searchSuggestionsBox.style.display = "none";
@@ -826,8 +938,22 @@
             staticBg.style.display = "none";
             videoBg.style.display = "block";
             playerElement.classList.add('visible');
+            currentPlaylistSource = 'drake';
             if (currentActiveView === 'artists-view') { regenerateShuffledPool(); loadPlaylistTrack(currentPlayedPool[0]); }
             navigateTo('albums-view');
+        }
+
+        function enterMarsArchive() {
+            searchSuggestionsBox.style.display = "none";
+            document.getElementById('mainSearchInput').value = "";
+            staticBg.style.display = "none";
+            videoBg.style.display = "block";
+            playerElement.classList.add('visible');
+            currentPlaylistSource = 'mars';
+            currentPlayedPool = [...marsPlaylist];
+            currentPlaylistIndex = 0;
+            loadPlaylistTrack(currentPlayedPool[0]);
+            navigateTo('mars-albums-view');
         }
 
         const fakeUsersData = ["kay00pium", "wodka_0", "nemo6.9", "prodbyKay", "808mafia_fan", "drizzy_boy"];
@@ -888,6 +1014,7 @@
         }
 
         function openAlbumGUI(albumName, coverImg) {
+            previousView = currentActiveView;
             selectedKit = albumName;
             isUnlocked = false;
             document.getElementById('gui-album-title').innerText = albumName;
@@ -924,6 +1051,7 @@
 
         function executeDownloadTimer() {
             if (!availableKits.includes(selectedKit)) return;
+            if (selectedKit === 'Wasteland Drumkit') { openWastelandPopup(); return; }
             const btn = document.getElementById('gui-download-btn');
             const fallback = document.getElementById('gui-fallback');
             if (isUnlocked) { window.open(globalDownloadLink, '_blank'); fallback.style.display = "block"; return; }
@@ -984,8 +1112,11 @@
 
         function handleSearchProgression(val) {
             const cleanVal = val.toLowerCase().trim();
-            if (["d", "dr", "dra", "drak", "drake"].includes(cleanVal)) { searchSuggestionsBox.style.display = "block"; }
-            else { searchSuggestionsBox.style.display = "none"; }
+            const showDrake = cleanVal.startsWith('d') || cleanVal.includes('drake');
+            const showMars = cleanVal.startsWith('m') || cleanVal.includes('mars');
+            if ((cleanVal && (showDrake || showMars))) {
+                searchSuggestionsBox.style.display = "block";
+            } else { searchSuggestionsBox.style.display = "none"; }
         }
 
         setInterval(() => {
